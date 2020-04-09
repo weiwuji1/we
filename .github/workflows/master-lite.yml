@@ -42,20 +42,22 @@ jobs:
         REPO_BRANCH: dev-master
       run: | 
          git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt         
-         git clone https://github.com/vernesong/OpenClash openwrt/package/lean/openclash
-         git clone -b lean https://github.com/Sweet-Fairy/luci-app-ssr-plus-Jo openwrt/package/lean/luci-app-ssr-plus-lean
+         git clone https://github.com/vernesong/OpenClash openwrt/package/lean/openclash         
          git clone https://github.com/weiwuji1/luci-app-cifs openwrt/package/lean/luci-app-cifs 
          git clone https://github.com/weiwuji1/luci-app-koolproxyR openwrt/package/lean/luci-app-koolproxyR
          git clone https://github.com/kang-mk/luci-app-serverchan openwrt/package/lean/luci-app-serverchan
          git clone https://github.com/lisaac/luci-app-diskman openwrt/package/lean/luci-app-diskman
          mkdir -p openwrt/package/lean/parted && cp -i openwrt/package/lean/luci-app-diskman/Parted.Makefile openwrt/package/lean/parted/Makefile
          sed -i 's#192.168.1.1#10.1.1.11#g' openwrt/package/base-files/files/bin/config_generate #定制默认IP
+         sed -i 's#entry({"admin", "services", "openclash"},alias("admin", "services"#entry({"admin", "VPN", "openclash"},alias("admin", "VPN"#g' openwrt/package/lean/openclash/luci-app-openclash/files/usr/lib/lua/luci/controller/openclash.lua #更换应用控制菜单
          sed -i 's#entry({"admin", "services"#entry({"admin", "VPN"#g' openwrt/package/lean/openclash/luci-app-openclash/files/usr/lib/lua/luci/controller/openclash.lua #更换应用控制菜单
+         sed -i 's#entry({"admin", "services", "mwan3helper"},alias("admin", "services"#entry({"admin", "network", "mwan3helper"},alias("admin", "network"#g' openwrt/package/lean/luci-app-mwan3helper/luasrc/controller/mwan3helper.lua
+         sed -i 's#entry({"admin", "services"#entry({"admin", "network"#g' openwrt/package/lean/luci-app-mwan3helper/luasrc/controller/mwan3helper.lua
       #  sed -i 's#page = entry({"admin", "network"#page = entry({"admin", "control"#g' openwrt/package/OpenAppFilter/luci-app-oaf/luasrc/controller/appfilter.lua #更换应用控制菜单      
       #  sed -i 's#entry({"admin", "services"#entry({"admin", "VPN"#g' openwrt/package/lean/luci-app-vssr/luasrc/controller/vssr.lua #更换应用控制菜单
       #  sed -i 's#entry({"admin", "services"#entry({"admin", "VPN"#g' openwrt/package/lean/luci-app-ssr-plus/luasrc/controller/shadowsocksr.lua #更换应用控制菜单
       #  git clone https://github.com/destan19/OpenAppFilter openwrt/package/OpenAppFilter
-      #  git clone https://github.com/weiwuji1/luci-app-ssr-plus openwrt/package/lean/luci-app-ssr-plus
+      #  git clone -b lean https://github.com/Sweet-Fairy/luci-app-ssr-plus-Jo openwrt/package/lean/luci-app-ssr-plus-lean
       #  git clone https://github.com/jerrykuku/luci-app-vssr openwrt/package/lean/luci-app-vssr
       #  git clone https://github.com/sypopo/luci-theme-argon-mc openwrt/package/lean/luci-theme-argon-mc
       #  git clone https://github.com/Leo-Jo-My/luci-theme-opentomcat openwrt/package/lean/luci-theme-opentomcat
