@@ -55,7 +55,7 @@ CONFIG_PACKAGE_bbr-nanqinlang
 CONFIG_PACKAGE_kmod-tcp-bbr=y
 #CONFIG_PACKAGE_kmod-tcp-bbr-nanqinlang=y
 #CONFIG_PACKAGE_AdGuardHome
-# CONFIG_PACKAGE_luci-app-ssr-plus=y
+CONFIG_PACKAGE_luci-app-ssr-plus-lean=y
 # CONFIG_PACKAGE_luci-app-vssr=y
 
 #
