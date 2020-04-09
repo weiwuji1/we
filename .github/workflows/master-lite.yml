@@ -43,7 +43,7 @@ jobs:
       run: | 
          git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt         
          git clone https://github.com/vernesong/OpenClash openwrt/package/lean/openclash
-         git clone -b lean  https://github.com/Leo-Jo-My/luci-app-ssr-plus-Jo openwrt/package/lean/luci-app-ssr-plus-lean
+         git clone -b lean https://github.com/Sweet-Fairy/luci-app-ssr-plus-Jo openwrt/package/lean/luci-app-ssr-plus-lean
          git clone https://github.com/weiwuji1/luci-app-cifs openwrt/package/lean/luci-app-cifs 
          git clone https://github.com/weiwuji1/luci-app-koolproxyR openwrt/package/lean/luci-app-koolproxyR
          git clone https://github.com/kang-mk/luci-app-serverchan openwrt/package/lean/luci-app-serverchan
