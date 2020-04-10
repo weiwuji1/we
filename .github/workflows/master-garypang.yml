@@ -5,7 +5,7 @@
 # Author: P3TERX
 # Blog: https://p3terx.com
 #=================================================
-name: main-master
+name: garypang-master
 
 on:
 #  schedule:
@@ -82,7 +82,7 @@ jobs:
       run: |
           cd openwrt
           rm -f .config
-          cp ../we/main-master-lite .config
+          cp ../we/garypang13-config .config
                
           
     - name: Make Defconfig
