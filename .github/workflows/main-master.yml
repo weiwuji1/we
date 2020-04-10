@@ -5,19 +5,18 @@
 # Author: P3TERX
 # Blog: https://p3terx.com
 #=================================================
-name: garypang-master
+name: main-master
 
 on:
-#  schedule:
-#    - cron: 0 20 * * *
-# push:
-#   branches: 
-#     - master
+# schedule:
+#   - cron: 0 20 * * *
+#  push:
+#    branches: 
+#      - master
   watch:
     types: [started]
     branches: 
       - master
-
 jobs:
   build:
     if: github.event.repository.owner.id == github.event.sender.id
@@ -49,32 +48,18 @@ jobs:
          git clone https://github.com/lisaac/luci-app-diskman openwrt/package/lean/luci-app-diskman
          mkdir -p openwrt/package/lean/parted && cp -i openwrt/package/lean/luci-app-diskman/Parted.Makefile openwrt/package/lean/parted/Makefile
          sed -i 's#192.168.1.1#10.1.1.11#g' openwrt/package/base-files/files/bin/config_generate #定制默认IP
-         sed -i 's#entry({"admin", "services", "openclash"},alias("admin", "services"#entry({"admin", "VPN", "openclash"},alias("admin", "VPN"#g' openwrt/package/lean/openclash/luci-app-openclash/files/usr/lib/lua/luci/controller/openclash.lua #更换应用控制菜单
-         sed -i 's#entry({"admin", "services"#entry({"admin", "VPN"#g' openwrt/package/lean/openclash/luci-app-openclash/files/usr/lib/lua/luci/controller/openclash.lua #更换应用控制菜单
-         sed -i 's#entry({"admin", "services", "mwan3helper"},alias("admin", "services"#entry({"admin", "network", "mwan3helper"},alias("admin", "network"#g' openwrt/package/lean/luci-app-mwan3helper/luasrc/controller/mwan3helper.lua
-         sed -i 's#entry({"admin", "services"#entry({"admin", "network"#g' openwrt/package/lean/luci-app-mwan3helper/luasrc/controller/mwan3helper.lua
-      #  sed -i 's#page = entry({"admin", "network"#page = entry({"admin", "control"#g' openwrt/package/OpenAppFilter/luci-app-oaf/luasrc/controller/appfilter.lua #更换应用控制菜单      
-      #  sed -i 's#entry({"admin", "services"#entry({"admin", "VPN"#g' openwrt/package/lean/luci-app-vssr/luasrc/controller/vssr.lua #更换应用控制菜单
-      #  sed -i 's#entry({"admin", "services"#entry({"admin", "VPN"#g' openwrt/package/lean/luci-app-ssr-plus/luasrc/controller/shadowsocksr.lua #更换应用控制菜单
-      #  git clone https://github.com/destan19/OpenAppFilter openwrt/package/OpenAppFilter
-      #  git clone -b lean https://github.com/Sweet-Fairy/luci-app-ssr-plus-Jo openwrt/package/lean/luci-app-ssr-plus-lean
-      #  git clone https://github.com/jerrykuku/luci-app-vssr openwrt/package/lean/luci-app-vssr
-      #  git clone https://github.com/sypopo/luci-theme-argon-mc openwrt/package/lean/luci-theme-argon-mc
-      #  git clone https://github.com/Leo-Jo-My/luci-theme-opentomcat openwrt/package/lean/luci-theme-opentomcat
-      #  rm -rf openwrt/package/lean/luci-app-flowoffload
-      #  git clone https://github.com/weiwuji1/luci-app-flowoffload openwrt/package/lean/luci-app-flowoffload
-      #  git clone https://github.com/weiwuji1/AdGuardHome openwrt/package/lean/AdGuardHome
-      #  git clone https://github.com/weiwuji1/Openwrt-BBR openwrt/package/lean/Openwrt-BBR
-      
+         sed -i 's#page = entry({"admin", "network"#page = entry({"admin", "control"#g' openwrt/package/OpenAppFilter/luci-app-oaf/luasrc/controller/appfilter.lua #更换应用控制菜单      
+    
+ 
     - name: Clone Config
       env: 
         REPO_URL: https://github.com/weiwuji1/we
         REPO_BRANCH: master
       run: git clone --depth 1 $REPO_URL -b $REPO_BRANCH we
-    
+      
     - name: Update feeds
       run: cd openwrt && ./scripts/feeds update -a
-          
+
     - name: Install feeds
       run: cd openwrt && ./scripts/feeds install -a
     
@@ -82,21 +67,25 @@ jobs:
       run: |
           cd openwrt
           rm -f .config
-          cp ../we/garypang13-config .config
-               
+          cp ../openwrt-config/main-master .config
           
     - name: Make Defconfig
       run: |
           cd openwrt
           make defconfig
-             
+    
+    - name: SSH connection to Actions
+      env:
+        SSH_ACTIONS: true
+      uses: P3TERX/debugger-action@master
+      if: env.SSH_ACTIONS == 'true'
+    
     - name: Make download
       run: |
           cd openwrt
           make download -j8
           find dl -size -1024c -exec ls -l {} \;
           find dl -size -1024c -exec rm -f {} \;
-          
     - name: Multi-thread compile
       run: |
           cd openwrt
