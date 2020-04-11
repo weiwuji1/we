@@ -46,8 +46,7 @@ jobs:
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-koolproxyR openwrt/package/lean/luci-app-koolproxyR     
          git clone https://github.com/Leo-Jo-My/luci-theme-argon-mod openwrt/package/lean/luci-theme-argon-mod
          git clone https://github.com/Leo-Jo-My/luci-theme-opentomcat openwrt/package/lean/luci-theme-opentomcat         
-         git clone https://github.com/vernesong/OpenClash openwrt/package/openclash
-         git clone -b lean https://github.com/Sweet-Fairy/luci-app-ssr-plus-Jo openwrt/package/lean/luci-app-ssr-plus-lean         
+         git clone https://github.com/vernesong/OpenClash openwrt/package/openclash                  
          git clone https://github.com/kang-mk/luci-app-serverchan openwrt/package/lean/luci-app-serverchan
          git clone https://github.com/lisaac/luci-app-diskman openwrt/package/lean/luci-app-diskman
          mkdir -p openwrt/package/lean/parted && cp -i openwrt/package/lean/luci-app-diskman/Parted.Makefile openwrt/package/lean/parted/Makefile
@@ -60,6 +59,7 @@ jobs:
       #  svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/diy/luci-app-vssr.tar.xz openwrt/package/diy/
       #  git clone https://github.com/jerrykuku/luci-app-vssr openwrt/package/lean/luci-app-vssr
       #  rm -rf openwrt/package/lean/luci-app-flowoffload
+      #  git clone -b lean https://github.com/Sweet-Fairy/luci-app-ssr-plus-Jo openwrt/package/lean/luci-app-ssr-plus-lean
       
     - name: Clone Config
       env: 
