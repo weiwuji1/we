@@ -43,7 +43,8 @@ jobs:
       run: | 
          git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt 
          rm -rf openwrt/package/lean/luci-app-flowoffload
-         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my openwrt/package/my
+         rm -rf openwrt/package/lean/dnsforwarder
+         svn co https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my openwrt/package/my
          rm -rf openwrt/package/my/luci-app-passwall    
          sed -i 's#192.168.1.1#10.1.1.11#g' openwrt/package/base-files/files/bin/config_generate #定制默认IP
          sed -i 's#page = entry({"admin", "network"#page = entry({"admin", "control"#g' openwrt/package/my/OpenAppFilter/luci-app-oaf/luasrc/controller/appfilter.lua #更换应用控制菜单      
