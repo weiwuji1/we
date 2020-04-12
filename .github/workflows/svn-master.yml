@@ -1,0 +1,124 @@
+#=================================================
+# https://github.com/P3TERX/Actions-OpenWrt
+# Description: Build OpenWrt using GitHub Actions
+# Lisence: MIT
+# Author: P3TERX
+# Blog: https://p3terx.com
+#=================================================
+name: svn-master
+
+on:
+#  schedule:
+#    - cron: 0 20 * * *
+# push:
+#   branches: 
+#     - master
+  watch:
+    types: [started]
+    branches: 
+      - master
+
+jobs:
+  build:
+    if: github.event.repository.owner.id == github.event.sender.id
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Initialization environment
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+          sudo rm -rf /usr/share/dotnet /etc/mysql /etc/php /etc/apt/sources.list.d
+          sudo -E apt-get -y purge azure-cli ghc* zulu* hhvm llvm* firefox google* dotnet* powershell openjdk* mysql* php*
+          sudo -E apt-get -qq update
+          sudo -E apt-get -qq install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs git-core gcc-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler
+          sudo ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+          sudo -E apt-get -y autoremove --purge
+          sudo -E apt-get clean
+          
+    - name: Clone source code
+      env: 
+        REPO_URL: https://github.com/Lienol/openwrt
+        REPO_BRANCH: dev-master
+      run: | 
+         git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt 
+         rm -rf openwrt/package/lean/luci-app-flowoffload
+         rm -rf openwrt/package/default-settings
+         git clone https://github.com/weiwuji1/default-settings openwrt/package/default-settings
+         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/AdGuardHome openwrt/package/my/AdGuardHome
+         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/Openwrt-BBR-master openwrt/package/my/Openwrt-BBR-master
+         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-cifs openwrt/package/my/luci-app-cifs         
+         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-koolproxyR openwrt/package/my/luci-app-koolproxyR
+         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-openclash openwrt/package/my/luci-app-openclash
+         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-serverchan openwrt/package/my/luci-app-serverchan
+         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-theme-argon-mod openwrt/package/my/luci-theme-argon-mod
+         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-theme-opentomcat openwrt/package/my/luci-theme-opentomcat      
+         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/lean/luci-app-flowoffload openwrt/package/lean/luci-app-flowoffload         
+         sed -i 's#192.168.1.1#10.1.1.11#g' openwrt/package/base-files/files/bin/config_generate #定制默认IP
+         sed -i 's#page = entry({"admin", "network"#page = entry({"admin", "control"#g' openwrt/package/my/OpenAppFilter/luci-app-oaf/luasrc/controller/appfilter.lua #更换应用控制菜单      
+      #  sed -i 's#entry({"admin", "services"#entry({"admin", "VPN"#g' openwrt/package/lean/openclash/luci-app-openclash/files/usr/lib/lua/luci/controller/openclash.lua #更换应用控制菜单
+      #  sed -i 's#entry({"admin", "services"#entry({"admin", "VPN"#g' openwrt/package/lean/luci-app-ssr-plus/luasrc/controller/shadowsocksr.lua #更换应用控制菜单
+      #  sed -i 's#entry({"admin", "services"#entry({"admin", "network"#g' openwrt/package/lean/luci-app-mwan3helper/luasrc/controller/mwan3helper.lua #更换应用控制菜单
+      #  sed -i 's#entry({"admin", "services"#entry({"admin", "network"#g' openwrt/package/lean/luci-app-nft-qos/luasrc/controller/nft-qos.lua
+      #  git clone https://github.com/lisaac/luci-app-diskman openwrt/package/lean/luci-app-diskman
+      #  mkdir -p openwrt/package/lean/parted && cp -i openwrt/package/lean/luci-app-diskman/Parted.Makefile openwrt/package/lean/parted/Makefile
+      #  sed -i 's#entry({"admin", "services"#entry({"admin", "VPN"#g' openwrt/package/lean/luci-app-vssr/luasrc/controller/vssr.lua #更换应用控制菜单
+      #  git clone https://github.com/sypopo/luci-theme-argon-mc openwrt/package/lean/luci-theme-argon-mc
+            
+    - name: Clone Config
+      env: 
+        REPO_URL: https://github.com/weiwuji1/we
+        REPO_BRANCH: master
+      run: git clone --depth 1 $REPO_URL -b $REPO_BRANCH we
+    
+    - name: Update feeds
+      run: cd openwrt && ./scripts/feeds update -a
+          
+    - name: Install feeds
+      run: cd openwrt && ./scripts/feeds install -a
+    
+    - name: Custom configure file
+      run: |
+          cd openwrt
+          rm -f .config
+          cp ../we/main-master .config
+               
+          
+    - name: Make Defconfig
+      run: |
+          cd openwrt
+          make defconfig
+    - name: SSH connection to Actions
+      env:
+        SSH_ACTIONS: true
+      uses: P3TERX/debugger-action@master
+      if: env.SSH_ACTIONS == 'true'
+
+    - name: Make download
+      run: |
+          cd openwrt
+          make download -j8
+          find dl -size -1024c -exec ls -l {} \;
+          find dl -size -1024c -exec rm -f {} \;
+          
+    - name: Multi-thread compile
+      run: |
+          cd openwrt
+          echo -e "$(nproc) thread build."
+          make -j$(nproc) V=s
+    - name: Single-thread compile
+      if: failure()
+      run: |
+          cd openwrt
+          make -j1 V=s
+    - name: Assemble artifact
+      run: |
+          rm -rf ./artifact/
+          mkdir -p ./artifact/
+          find openwrt/bin/targets/ -name "*sysupgrade*bin*" | xargs -i mv -f {} ./artifact/
+          find openwrt/bin/targets/ -name "*combined*img*" | xargs -i mv -f {} ./artifact/
+    - name: Upload artifact
+      uses: actions/upload-artifact@master
+      with:
+        name: OpenWrt firmware
+        path: ./artifact/
