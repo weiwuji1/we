@@ -90,7 +90,7 @@ jobs:
       run: |
           cd openwrt
           rm -f .config
-          cp ../we/lean-config-lite .config
+          cp ../we/lean-config .config
                
           
     - name: Make Defconfig
