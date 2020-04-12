@@ -58,7 +58,7 @@ jobs:
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-theme-argon-mod openwrt/package/my/luci-theme-argon-mod
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-theme-opentomcat openwrt/package/my/luci-theme-opentomcat
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/openwrt-dnsforwarder openwrt/package/my/openwrt-dnsforwarder
-         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/partedd openwrt/package/my/parted
+         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/parted openwrt/package/my/parted
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/smartdns openwrt/package/my/smartdns
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/ttyd openwrt/package/my/ttyd
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/lean/luci-app-flowoffload openwrt/package/lean/luci-app-flowoffload
