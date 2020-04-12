@@ -100,7 +100,7 @@ jobs:
 
     - name: SSH connection to Actions
       env:
-        SSH_ACTIONS: true
+        SSH_ACTIONS: false
       uses: P3TERX/debugger-action@master
       if: env.SSH_ACTIONS == 'true'
 
