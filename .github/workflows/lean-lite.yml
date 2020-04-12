@@ -44,8 +44,23 @@ jobs:
          git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt 
          rm -rf openwrt/package/lean/luci-app-flowoffload
          rm -rf openwrt/package/lean/dnsforwarder
-         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my openwrt/package/lean/ .
-         rm -rf openwrt/package/my/luci-app-passwall    
+         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/AdGuardHome openwrt/package/my/AdGuardHome
+         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/OpenAppFilter openwrt/package/my/OpenAppFilter
+         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/Openwrt-BBR-master openwrt/package/my/Openwrt-BBR-master
+         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-cifs openwrt/package/my/luci-app-cifs
+         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-diskman openwrt/package/my/luci-app-diskman
+         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-koolproxyR openwrt/package/my/luci-app-koolproxyR
+         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-luci-app-openclash openwrt/package/my/luci-app-openclash
+         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-serverchan openwrt/package/my/luci-app-serverchan
+         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-smartdns openwrt/package/my/luci-app-smartdns
+         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-theme-argon-mod openwrt/package/my/luci-theme-argon-mod
+         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-theme-opentomcat openwrt/package/my/luci-theme-opentomcat
+         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/openwrt-dnsforwarder openwrt/package/my/openwrt-dnsforwarder
+         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/partedd openwrt/package/my/parted
+         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/smartdns openwrt/package/my/smartdns
+         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/ttyd openwrt/package/my/ttyd
+         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/lean/luci-app-flowoffload openwrt/package/lean/luci-app-flowoffload
+         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/lean/luci-app-ttyd openwrt/package/my/luci-app-ttyd
          sed -i 's#192.168.1.1#10.1.1.11#g' openwrt/package/base-files/files/bin/config_generate #定制默认IP
          sed -i 's#page = entry({"admin", "network"#page = entry({"admin", "control"#g' openwrt/package/my/OpenAppFilter/luci-app-oaf/luasrc/controller/appfilter.lua #更换应用控制菜单      
       #  sed -i 's#entry({"admin", "services"#entry({"admin", "VPN"#g' openwrt/package/lean/openclash/luci-app-openclash/files/usr/lib/lua/luci/controller/openclash.lua #更换应用控制菜单
