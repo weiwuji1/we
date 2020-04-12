@@ -44,13 +44,15 @@ jobs:
          git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt 
          rm -rf openwrt/package/lean/luci-app-flowoffload
          rm -rf openwrt/package/lean/dnsforwarder
+         rm -rf openwrt/package/lean/default-settings
+         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/lean/default-settings openwrt/package/lean/default-settings
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/AdGuardHome openwrt/package/my/AdGuardHome
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/OpenAppFilter openwrt/package/my/OpenAppFilter
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/Openwrt-BBR-master openwrt/package/my/Openwrt-BBR-master
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-cifs openwrt/package/my/luci-app-cifs
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-diskman openwrt/package/my/luci-app-diskman
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-koolproxyR openwrt/package/my/luci-app-koolproxyR
-         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-luci-app-openclash openwrt/package/my/luci-app-openclash
+         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-openclash openwrt/package/my/luci-app-openclash
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-serverchan openwrt/package/my/luci-app-serverchan
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-smartdns openwrt/package/my/luci-app-smartdns
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-theme-argon-mod openwrt/package/my/luci-theme-argon-mod
