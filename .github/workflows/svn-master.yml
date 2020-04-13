@@ -44,7 +44,7 @@ jobs:
          git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt 
          rm -rf openwrt/package/default-settings
          git clone https://github.com/weiwuji1/default-settings openwrt/package/default-settings
-         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-cifs openwrt/package/my/luci-app-cifs         
+         svn checkout https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-cifs openwrt/package/my/luci-app-cifs         
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-koolproxyR openwrt/package/my/luci-app-koolproxyR
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-openclash openwrt/package/my/luci-app-openclash
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-serverchan openwrt/package/my/luci-app-serverchan
@@ -87,7 +87,7 @@ jobs:
           make defconfig
     - name: SSH connection to Actions
       env:
-        SSH_ACTIONS: true
+        SSH_ACTIONS: false
       uses: P3TERX/debugger-action@master
       if: env.SSH_ACTIONS == 'true'
 
