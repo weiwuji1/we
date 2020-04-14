@@ -87,7 +87,7 @@ jobs:
           make defconfig
     - name: SSH connection to Actions
       env:
-        SSH_ACTIONS: false
+        SSH_ACTIONS: true
       uses: P3TERX/debugger-action@master
       if: env.SSH_ACTIONS == 'true'
 
@@ -114,6 +114,7 @@ jobs:
           mkdir -p ./artifact/
           find openwrt/bin/targets/ -name "*sysupgrade*bin*" | xargs -i mv -f {} ./artifact/
           find openwrt/bin/targets/ -name "*combined*img*" | xargs -i mv -f {} ./artifact/
+          find openwrt/bin/package | xargs -i mv -f {} ./artifact/
     - name: Upload artifact
       uses: actions/upload-artifact@master
       with:
