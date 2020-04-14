@@ -45,11 +45,12 @@ jobs:
          rm -rf openwrt/package/default-settings
          git clone https://github.com/weiwuji1/default-settings openwrt/package/default-settings
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-cifs openwrt/package/my/luci-app-cifs
-         svn checkout https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-ttyd openwrt/package/lean/luci-app-ttyd
+         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/ttyd openwrt/package/my/ttyd
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-koolproxyR openwrt/package/my/luci-app-koolproxyR
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-openclash openwrt/package/my/luci-app-openclash
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-serverchan openwrt/package/my/luci-app-serverchan
          git clone -b lean https://github.com/Sweet-Fairy/luci-app-ssr-plus-Jo openwrt/package/lean/luci-app-ssr-plus-lean
+         git clone https://github.com/Leo-Jo-My/luci-app-vssr openwrt/package/luci-app-vssr
          git clone https://github.com/lisaac/luci-app-diskman openwrt/package/lean/luci-app-diskman
          mkdir -p openwrt/package/lean/parted && cp -i openwrt/package/lean/luci-app-diskman/Parted.Makefile openwrt/package/lean/parted/Makefile
          sed -i 's#192.168.1.1#10.1.1.11#g' openwrt/package/base-files/files/bin/config_generate #定制默认IP
