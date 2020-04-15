@@ -57,10 +57,9 @@ jobs:
     
  
     - name: Clone Config
-      env: 
-        REPO_URL: https://github.com/weiwuji1/we
-        REPO_BRANCH: master
-      run: git clone --depth 1 $REPO_URL -b $REPO_BRANCH we
+       env: 
+        REPO_URL: https://github.com/Lienol/openwrt-actions
+      run: git clone --depth 1 $REPO_URL openwrt-config
       
     - name: Update feeds
       run: cd openwrt && ./scripts/feeds update -a
@@ -72,7 +71,7 @@ jobs:
       run: |
           cd openwrt
           rm -f .config
-          cp ../we/main-master .config
+          cp ../openwrt-config/x64-master .config
           
     - name: Make Defconfig
       run: |
