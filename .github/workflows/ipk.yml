@@ -79,7 +79,7 @@ jobs:
 
     - name: Custom configure file
       run: |
-          cd $WORK_PATH
+          cd openwrt
           rm -f .config
           cp ../openwrt-config/x64-master .config
     - name: Make Defconfig
