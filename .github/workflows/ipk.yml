@@ -64,8 +64,6 @@ jobs:
         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-openclash openwrt/package/my/luci-app-openclash
         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-serverchan openwrt/package/my/luci-app-serverchan   
         mkdir -p openwrt/package/lean/parted && cp -i openwrt/package/lean/luci-app-diskman/Parted.Makefile openwrt/package/lean/parted/Makefile                 
-        sed -i 's#192.168.1.1#10.1.1.11#g' openwrt/package/base-files/files/bin/config_generate #定制默认IP
-        sed -i 's#page = entry({"admin", "network"#page = entry({"admin", "control"#g' openwrt/package/OpenAppFilter/luci-app-oaf/luasrc/controller/appfilter.lua #更换应用控制菜单
          
     - name: Update Feeds                    # 4.下载Feeds
       run: |
