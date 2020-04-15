@@ -64,7 +64,12 @@ jobs:
         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-openclash openwrt/package/my/luci-app-openclash
         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-serverchan openwrt/package/my/luci-app-serverchan   
         mkdir -p openwrt/package/lean/parted && cp -i openwrt/package/lean/luci-app-diskman/Parted.Makefile openwrt/package/lean/parted/Makefile                 
-         
+    
+    - name: Clone Config
+      env: 
+        REPO_URL: https://github.com/Lienol/openwrt-actions
+      run: git clone --depth 1 $REPO_URL openwrt-config      
+   
     - name: Update Feeds                    # 4.下载Feeds
       run: |
         cd $WORK_PATH
