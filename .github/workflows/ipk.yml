@@ -25,7 +25,7 @@ env:
   UPLOAD_PACKAGES_DIR: true                 # 是否导出bin文件
   UPLOAD_FIRMWARE: true                # 是否导出固件
   CLONE_URL: https://github.com/Lienol/openwrt  # 地址
-  CLONE_BRANCH: master                 # 分支
+  CLONE_BRANCH: dev-master                 # 分支
   WORK_PATH: opt/openwrt               # 工作目录
 
 jobs:
