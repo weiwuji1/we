@@ -57,7 +57,7 @@ jobs:
     
  
     - name: Clone Config
-       env: 
+      env: 
         REPO_URL: https://github.com/Lienol/openwrt-actions
       run: git clone --depth 1 $REPO_URL openwrt-config
       
