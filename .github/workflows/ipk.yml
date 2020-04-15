@@ -26,7 +26,7 @@ env:
   UPLOAD_FIRMWARE: true                # 是否导出固件
   CLONE_URL: https://github.com/Lienol/openwrt  # 地址
   CLONE_BRANCH: dev-master                 # 分支
-  WORK_PATH: opt/openwrt               # 工作目录
+  WORK_PATH: openwrt               # 工作目录
 
 jobs:
   build:
@@ -79,7 +79,7 @@ jobs:
 
     - name: Custom configure file
       run: |
-          cd openwrt
+          cd $WORK_PATH
           rm -f .config
           cp ../openwrt-config/x64-master .config
     - name: Make Defconfig
@@ -95,7 +95,6 @@ jobs:
     - name: Download  Package                # 6.下载包
       run: |
         cd $WORK_PATH
-        make defconfig
         make download -j8
         find dl -size -1024c -exec rm -f {} \;
     - name: Build                            # 7. 构建
