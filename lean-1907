@@ -5912,6 +5912,7 @@ CONFIG_PACKAGE_luci-app-vlmcsd=y
 CONFIG_PACKAGE_luci-app-vsftpd=n
 CONFIG_PACKAGE_luci-app-vssr-plus=y
 CONFIG_PACKAGE_luci-app-vssr-plus_INCLUDE_simple-obfs-server=n
+CONFIG_PACKAGE_luci-app-vssr-plus_INCLUDE_dnsforwarder=n
 # CONFIG_PACKAGE_luci-app-watchcat is not set
 # CONFIG_PACKAGE_luci-app-webadmin is not set
 # CONFIG_PACKAGE_luci-app-wifischedule is not set
