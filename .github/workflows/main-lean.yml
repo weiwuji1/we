@@ -49,20 +49,23 @@ jobs:
          git clone https://github.com/destan19/OpenAppFilter openwrt/package/OpenAppFilter
          git clone https://github.com/weiwuji1/luci-app-vssr-plus openwrt/package/luci-app-vssr-plus
          git clone https://github.com/weiwuji1/my openwrt/package/my
+         git clone https://github.com/Leo-Jo-My/luci-theme-opentomcat openwrt/package/lean/luci-theme-opentomcat  
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/AdGuardHome openwrt/package/my/AdGuardHome
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/Openwrt-BBR-master openwrt/package/my/Openwrt-BBR-master
+         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-smartdns openwrt/package/my/luci-app-smartdns
+         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/smartdns openwrt/package/my/smartdns            
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-koolproxyR openwrt/package/my/luci-app-koolproxyR
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-serverchan openwrt/package/my/luci-app-serverchan
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-theme-argon-mod openwrt/package/my/luci-theme-argon-mod    
-         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/lean/luci-app-flowoffload openwrt/package/lean/luci-app-flowoffload          
-         git clone https://github.com/Leo-Jo-My/luci-theme-opentomcat openwrt/package/lean/luci-theme-opentomcat                 
+         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/lean/luci-app-flowoffload openwrt/package/lean/luci-app-flowoffload                        
          sed -i 's#192.168.1.1#10.1.1.11#g' openwrt/package/base-files/files/bin/config_generate #定制默认IP            
       
             
     - name: Clone Config
       env: 
-          REPO_URL: https://github.com/Lienol/openwrt-actions
-      run: git clone --depth 1 $REPO_URL openwrt-config
+        REPO_URL: https://github.com/weiwuji1/we
+        REPO_BRANCH: lean
+      run: git clone --depth 1 $REPO_URL -b $REPO_BRANCH we
     
     - name: Update feeds
       run: cd openwrt && ./scripts/feeds update -a
@@ -74,7 +77,7 @@ jobs:
       run: |
           cd openwrt
           rm -f .config
-          cp ../openwrt-config/x64-master .config
+          cp ../we/lean-1907 .config
                
           
     - name: Make Defconfig
@@ -83,7 +86,7 @@ jobs:
           make defconfig
     - name: SSH connection to Actions
       env:
-        SSH_ACTIONS: true
+        SSH_ACTIONS: false
       uses: P3TERX/debugger-action@master
       if: env.SSH_ACTIONS == 'true'
 
