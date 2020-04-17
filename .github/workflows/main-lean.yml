@@ -51,13 +51,17 @@ jobs:
          git clone https://github.com/weiwuji1/my openwrt/package/my
          git clone https://github.com/Leo-Jo-My/luci-theme-opentomcat openwrt/package/lean/luci-theme-opentomcat  
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/AdGuardHome openwrt/package/my/AdGuardHome
-         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/Openwrt-BBR-master openwrt/package/my/Openwrt-BBR-master
+         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/Openwrt-BBR-master/bbr-nanqinlang openwrt/package/my/bbr-nanqinlang
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-smartdns openwrt/package/my/luci-app-smartdns
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/smartdns openwrt/package/my/smartdns            
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-koolproxyR openwrt/package/my/luci-app-koolproxyR
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-serverchan openwrt/package/my/luci-app-serverchan
-         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-theme-argon-mod openwrt/package/my/luci-theme-argon-mod    
-         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/lean/luci-app-flowoffload openwrt/package/lean/luci-app-flowoffload                        
+         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-theme-argon-mod openwrt/package/my/luci-theme-argon-mod
+         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-cifs openwrt/package/my/luci-app-cifs    
+         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/lean/luci-app-flowoffload openwrt/package/lean/luci-app-flowoffload         
+         svn checkout https://github.com/coolsnowwolf/lede/trunk/package/lean/ipt2socks openwrt/package/lean/ipt2socks
+         svn checkout https://github.com/coolsnowwolf/lede/trunk/package/lean/shadowsocksr-libev openwrt/package/lean/shadowsocksr-libev
+         svn checkout https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-cifs-mount openwrt/package/lean/luci-app-cifs-mount                       
          sed -i 's#192.168.1.1#10.1.1.11#g' openwrt/package/base-files/files/bin/config_generate #定制默认IP            
       
             
