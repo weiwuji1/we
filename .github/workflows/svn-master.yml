@@ -52,7 +52,7 @@ jobs:
          svn checkout https://github.com/fw876/helloworld/trunk/luci-app-ssr-plus openwrt/package/lean/luci-app-ssr-plus
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-serverchan openwrt/package/my/luci-app-serverchan
          svn checkout https://github.com/coolsnowwolf/lede/trunk/package/lean/ipt2socks openwrt/package/lean/ipt2socks
-         svn checkout https://github.com/coolsnowwolf/lede/trunk/package/lean/shadowsocksr-libev openwrt/package/lean/shadowsocksr-libev
+         svn checkout https://github.com/coolsnowwolf/lede/trunk/package/lean/tcpping openwrt/package/lean/tcpping
          svn checkout https://github.com/coolsnowwolf/lede/trunk/package/lean/dns2socks openwrt/package/lean/dns2socks
          svn checkout https://github.com/coolsnowwolf/lede/trunk/package/lean/microsocks openwrt/package/lean/microsocks
          svn checkout https://github.com/coolsnowwolf/lede/trunk/package/lean/redsocks2 openwrt/package/redsocks2
