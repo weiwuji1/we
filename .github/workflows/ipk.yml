@@ -53,8 +53,6 @@ jobs:
     - name: Clone Code                      # 3.拷贝代码
       run: |
         git clone --depth=1 $CLONE_URL -b $CLONE_BRANCH $WORK_PATH
-        rm -rf openwrt/package/default-settings
-        git clone https://github.com/weiwuji1/default-settings openwrt/package/default-settings
         git clone https://github.com/weiwuji1/my openwrt/package/my
         git clone -b lean https://github.com/Sweet-Fairy/luci-app-ssr-plus-Jo openwrt/package/lean/luci-app-ssr-plus-lean
         git clone https://github.com/weiwuji1/luci-app-vssr-plus openwrt/package/luci-app-vssr-plus
