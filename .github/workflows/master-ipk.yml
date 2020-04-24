@@ -49,6 +49,8 @@ jobs:
     - name: Clone Code                      # 3.拷贝代码
       run: |
         git clone --depth=1 $CLONE_URL -b $CLONE_BRANCH $WORK_PATH
+        rm rf openwrt/package/lean/luci-app-smartdns
+        rm rf openwrt/package/lean/smartdns
         git clone https://github.com/weiwuji1/my openwrt/package/my
         git clone https://github.com/kenzok8/openwrt-packages openwrt/package/openwrt-packages        
         git clone https://github.com/lisaac/luci-app-diskman openwrt/package/lean/luci-app-diskman        
@@ -60,8 +62,7 @@ jobs:
         echo 'sed -i 's/\"network\"/\"control\"/g' /usr/lib/lua/luci/controller/appfilter.lua' >> openwrt/package/default-settings/files/zzz-default-settings
         echo 'sed -i 's/\"services\"/\"vpn\"/g' /usr/lib/lua/luci/controller/openclash.lua' >> openwrt/package/default-settings/files/zzz-default-settings
         echo 'sed -i 's/\"services\"/\"vpn\"/g' /usr/lib/lua/luci/controller/shadowsocksr.lua' >> openwrt/package/default-settings/files/zzz-default-settings
-        rm rf openwrt/package/lean/luci-app-smartdns
-        rm rf openwrt/package/lean/smartdns
+        
       # git clone -b lean https://github.com/Sweet-Fairy/luci-app-ssr-plus-Jo openwrt/package/lean/luci-app-ssr-plus-lean
       # git clone https://github.com/weiwuji1/luci-app-vssr-plus openwrt/package/luci-app-vssr-plus
       # git clone https://github.com/vernesong/OpenClash package/openclash  
