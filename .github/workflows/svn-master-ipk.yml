@@ -5,7 +5,7 @@
 # Author: P3TERX
 # Blog: https://p3terx.com
 #=================================================
-name: svn-master
+name: svn-master-ipk
 
 on:
 #  schedule:
@@ -41,7 +41,7 @@ jobs:
         REPO_URL: https://github.com/Lienol/openwrt
         REPO_BRANCH: dev-master
       run: | 
-         git clone --depth=1 $CLONE_URL -b $CLONE_BRANCH $WORK_PATH
+         git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
          git clone https://github.com/kenzok8/openwrt-packages openwrt/package/openwrt-packages        
          git clone https://github.com/lisaac/luci-app-diskman openwrt/package/lean/luci-app-diskman        
          svn checkout https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-cifs-mount openwrt/package/my/luci-app-cifs-mount         
