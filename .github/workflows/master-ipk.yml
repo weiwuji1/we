@@ -50,7 +50,7 @@ jobs:
       run: |
         git clone --depth=1 $CLONE_URL -b $CLONE_BRANCH $WORK_PATH
         git clone https://github.com/weiwuji1/my openwrt/package/my
-        git clone https://github.com/kenzok8/openwrt-packages openwrt/package/my        
+        git clone https://github.com/kenzok8/openwrt-packages openwrt/package/openwrt-packages        
         git clone https://github.com/lisaac/luci-app-diskman openwrt/package/lean/luci-app-diskman        
         svn checkout https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-cifs-mount openwrt/package/my/luci-app-cifs-mount         
         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-koolproxyR openwrt/package/my/luci-app-koolproxyR
