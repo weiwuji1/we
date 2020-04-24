@@ -43,7 +43,7 @@ jobs:
           sudo ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
           sudo -E apt-get -y autoremove --purge
           sudo -E apt-get clean
-          sudo timedatectl set-timezone 'Asia/Shanghai'  # 设置时区
+
     - name: Clone Code                      # 3.拷贝代码
       run: |
         git clone --depth=1 $CLONE_URL -b $CLONE_BRANCH $WORK_PATH
