@@ -49,8 +49,6 @@ jobs:
     - name: Clone Code                      # 3.拷贝代码
       run: |
         git clone --depth=1 $CLONE_URL -b $CLONE_BRANCH $WORK_PATH
-        rm rf openwrt/package/lean/luci-app-smartdns
-        rm rf openwrt/package/lean/smartdns
         git clone https://github.com/weiwuji1/my openwrt/package/my
         git clone https://github.com/kenzok8/openwrt-packages openwrt/package/openwrt-packages        
         git clone https://github.com/lisaac/luci-app-diskman openwrt/package/lean/luci-app-diskman        
