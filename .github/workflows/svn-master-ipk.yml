@@ -72,7 +72,7 @@ jobs:
       run: |
           cd openwrt
           rm -f .config
-          cp ../we/main-master .config
+          cp ../we/1907 .config
                
           
     - name: Make Defconfig
@@ -81,7 +81,7 @@ jobs:
           make defconfig
     - name: SSH connection to Actions
       env:
-        SSH_ACTIONS: true
+        SSH_ACTIONS: false
       uses: P3TERX/debugger-action@master
       if: env.SSH_ACTIONS == 'true'
 
@@ -91,7 +91,7 @@ jobs:
           make download -j8
           find dl -size -1024c -exec ls -l {} \;
           find dl -size -1024c -exec rm -f {} \;
-          
+          rm -rf build_dir/target-x86_64_musl/Python-2.7.17
     - name: Multi-thread compile
       run: |
           cd openwrt
