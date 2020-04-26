@@ -48,11 +48,8 @@ jobs:
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-theme-tomato openwrt/package/my/luci-theme-tomato
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-serverchan openwrt/package/my/luci-app-serverchan   
          mkdir -p openwrt/package/lean/parted && cp -i openwrt/package/lean/luci-app-diskman/Parted.Makefile openwrt/package/lean/parted/Makefile                 
-         echo 'sed -i 's/\"network\"/\"control\"/g' /usr/lib/lua/luci/controller/appfilter.lua' >> openwrt/package/default-settings/files/zzz-default-settings
-         echo 'sed -i 's/\"services\"/\"vpn\"/g' /usr/lib/lua/luci/controller/openclash.lua' >> openwrt/package/default-settings/files/zzz-default-settings
-         echo 'sed -i 's/\"services\"/\"vpn\"/g' /usr/lib/lua/luci/controller/shadowsocksr.lua' >> openwrt/package/default-settings/files/zzz-default-settings                 
+         sed -i 's#page = entry({"admin", "network"#page = entry({"admin", "control"#g' openwrt/package/OpenAppFilter/luci-app-oaf/luasrc/controller/appfilter.lua #更换应用控制菜单                 
          sed -i 's#192.168.1.1#10.1.1.11#g' openwrt/package/base-files/files/bin/config_generate #定制默认IP
-       # sed -i 's#page = entry({"admin", "network"#page = entry({"admin", "control"#g' openwrt/package/OpenAppFilter/luci-app-oaf/luasrc/controller/appfilter.lua #更换应用控制菜单      
        # svn checkout https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-cifs-mount openwrt/package/my/luci-app-cifs-mount         
             
     - name: Clone Config
@@ -108,6 +105,8 @@ jobs:
           find openwrt/bin/targets/ -name "*sysupgrade*bin*" | xargs -i mv -f {} ./artifact/
           find openwrt/bin/targets/ -name "*combined*img*" | xargs -i mv -f {} ./artifact/
           find openwrt/bin/targets/ -type d -name "packages" | xargs -i mv -f {} ./artifact/
+          find openwrt/bin/targets/ -type d -name "luci" | xargs -i mv -f {} ./artifact/
+          find openwrt/bin/targets/ -type d -name "base" | xargs -i mv -f {} ./artifact/
     - name: Upload artifact
       uses: actions/upload-artifact@master
       with:
