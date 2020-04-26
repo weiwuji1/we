@@ -6138,7 +6138,7 @@ CONFIG_PACKAGE_SAMBA_MAX_DEBUG_LEVEL=-1
 # CONFIG_PACKAGE_seafile-ccnet is not set
 # CONFIG_PACKAGE_seafile-seahub is not set
 # CONFIG_PACKAGE_ser2net is not set
-CONFIG_PACKAGE_shadowsocksr-libev=y
+CONFIG_PACKAGE_shadowsocksr-libev=n
 CONFIG_PACKAGE_shadowsocksr-libev-alt=n
 CONFIG_PACKAGE_shadowsocksr-libev-server=n
 CONFIG_PACKAGE_shadowsocksr-libev-ssr-local=n
