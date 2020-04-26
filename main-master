@@ -4734,12 +4734,12 @@ CONFIG_PACKAGE_luci-theme-argon-dark-new=y
 CONFIG_PACKAGE_luci-theme-argon_new=y
 CONFIG_PACKAGE_luci-theme-bootstrap=y
 # CONFIG_PACKAGE_luci-theme-bootstrap-mod is not set
-CONFIG_PACKAGE_luci-theme-atmaterial=y
-CONFIG_PACKAGE_luci-theme-material=y
+CONFIG_PACKAGE_luci-theme-atmaterial=m
+#CONFIG_PACKAGE_luci-theme-material=y
 # CONFIG_PACKAGE_luci-theme-openwrt is not set
-CONFIG_PACKAGE_luci-theme-opentomato=y
+#CONFIG_PACKAGE_luci-theme-opentomato=y
 CONFIG_PACKAGE_luci-theme-tomato=y
-CONFIG_PACKAGE_luci-theme-opentomcat=y
+#CONFIG_PACKAGE_luci-theme-opentomcat=y
 #
 # 5. Protocols
 #
