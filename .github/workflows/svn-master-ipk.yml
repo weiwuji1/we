@@ -44,7 +44,6 @@ jobs:
          git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
          git clone https://github.com/kenzok8/openwrt-packages openwrt/package/openwrt-packages        
          git clone https://github.com/lisaac/luci-app-diskman openwrt/package/lean/luci-app-diskman        
-         svn checkout https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-cifs-mount openwrt/package/my/luci-app-cifs-mount         
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-koolproxyR openwrt/package/my/luci-app-koolproxyR
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-theme-tomato openwrt/package/my/luci-theme-tomato
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-serverchan openwrt/package/my/luci-app-serverchan   
@@ -54,7 +53,7 @@ jobs:
          echo 'sed -i 's/\"services\"/\"vpn\"/g' /usr/lib/lua/luci/controller/shadowsocksr.lua' >> openwrt/package/default-settings/files/zzz-default-settings                 
          sed -i 's#192.168.1.1#10.1.1.11#g' openwrt/package/base-files/files/bin/config_generate #定制默认IP
        # sed -i 's#page = entry({"admin", "network"#page = entry({"admin", "control"#g' openwrt/package/OpenAppFilter/luci-app-oaf/luasrc/controller/appfilter.lua #更换应用控制菜单      
-      
+       # svn checkout https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-cifs-mount openwrt/package/my/luci-app-cifs-mount         
             
     - name: Clone Config
       env: 
@@ -72,7 +71,7 @@ jobs:
       run: |
           cd openwrt
           rm -f .config
-          cp ../we/1907 .config
+          cp ../we/main-master .config
                
           
     - name: Make Defconfig
