@@ -105,12 +105,11 @@ jobs:
       run: |
           rm -rf ./artifact/
           mkdir -p ./artifact/
-          find openwrt/ -name "bin" | xargs -i mv -f {} ./artifact/
-        # find openwrt/bin/targets/ -name "*sysupgrade*bin*" | xargs -i mv -f {} ./artifact/
-        # find openwrt/bin/targets/ -name "*combined*img*" | xargs -i mv -f {} ./artifact/
-        # find openwrt/bin/ -type d -name "packages" | xargs -i mv -f {} ./artifact/
-        # find openwrt/bin/ -type d -name "luci" | xargs -i mv -f {} ./artifact/
-        # find openwrt/bin/ -type d -name "base" | xargs -i mv -f {} ./artifact/
+          find openwrt/bin/targets/ -name "*sysupgrade*bin*" | xargs -i mv -f {} ./artifact/
+          find openwrt/bin/targets/ -name "*combined*img*" | xargs -i mv -f {} ./artifact/
+          find openwrt/bin/ -name "packages" | xargs -i mv -f {} ./artifact/
+          find openwrt/bin/ -name "luci" | xargs -i mv -f {} ./artifact/
+          find openwrt/bin/ -name "base" | xargs -i mv -f {} ./artifact/
     - name: Upload artifact
       uses: actions/upload-artifact@master
       with:
