@@ -49,18 +49,17 @@ jobs:
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-serverchan openwrt/package/my/luci-app-serverchan   
          mkdir -p openwrt/package/lean/parted && cp -i openwrt/package/lean/luci-app-diskman/Parted.Makefile openwrt/package/lean/parted/Makefile
          sed -i 's#192.168.1.1#10.1.1.11#g' openwrt/package/base-files/files/bin/config_generate #定制默认IP
-         sed -i 's/\"network\"/\"control\"/g' openwrt/package/OpenAppFilter/luci-app-oaf/luasrc/controller/appfilter.lua
-         sed -i 's/\"services\"/\"vpn\"/g' openwrt/package/openwrt-packages/luci-app-openclash/files/usr/lib/lua/luci/controller/openclash.lua
-         sed -i 's/\"network\"/\"control\"/g' openwrt/package/openwrt-packages/luci-app-eqos/luasrc/controller/eqos.lua
-         sed -i 's/\"services\"/\"vpn\"/g' openwrt/package/openwrt-packages/luci-app-ssr-plus/luasrc/controller/shadowsocksr.lua
+         echo "sed -i 's/\"services\"/\"vpn\"/g' /usr/lib/lua/luci/controller/openclash.lua" >> /openwrt/package/default-settings/files/zzz-default-settings
+         echo "sed -i 's/\"services\"/\"vpn\"/g' /usr/lib/lua/luci/controller/shadowsocksr.lua" >> /openwrt/package/default-settings/files/zzz-default-settings
+         echo "sed -i 's/\"network\"/\"control\"/g' /usr/lib/lua/luci/controller/eqos.lua" >> /openwrt/package/default-settings/files/zzz-default-settings
+         echo "sed -i 's/\"QOS\"/\"control\"/g' /usr/lib/lua/luci/controller/nft-qos.lua" >> /openwrt/package/default-settings/files/zzz-default-settings
+         echo "sed -i 's/\"services\"/\"system\"/g' /usr/lib/lua/luci/controller/ttyd.lua" >> /openwrt/package/default-settings/files/zzz-default-settings
+       # sed -i 's/\"network\"/\"control\"/g' openwrt/package/openwrt-packages/luci-app-eqos/luasrc/controller/eqos.lua
+       # sed -i 's/\"services\"/\"vpn\"/g' openwrt/package/openwrt-packages/luci-app-ssr-plus/luasrc/controller/shadowsocksr.lua
        # svn checkout https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-cifs-mount openwrt/package/my/luci-app-cifs-mount 
        # sed -i 's#page = entry({"admin", "network"#page = entry({"admin", "control"#g' openwrt/package/OpenAppFilter/luci-app-oaf/luasrc/controller/appfilter.lua #更换应用控制菜单
-       # echo 'sed -i 's/\"network\"/\"control\"/g' /usr/lib/lua/luci/controller/appfilter.lua' >> openwrt/package/default-settings/files/zzz-default-settings
-       # echo 'sed -i 's/\"services\"/\"VPN\"/g' /usr/lib/lua/luci/controller/openclash.lua' >> openwrt/package/default-settings/files/zzz-default-settings
-       # echo 'sed -i 's/\"network\"/\"control\"/g' /usr/lib/lua/luci/controller/eqos.lua' >> openwrt/package/default-settings/files/zzz-default-settings
-       # echo 'sed -i 's/\"QOS\"/\"control\"/g' /usr/lib/lua/luci/controller/nft-qos.lua' >> openwrt/package/default-settings/files/zzz-default-settings
-       # echo 'sed -i 's/\"services\"/\"system\"/g' /usr/lib/lua/luci/controller/ttyd.lua' >> openwrt/package/default-settings/files/zzz-default-settings
-       # echo 'sed -i 's/\"services\"/\"VPN\"/g' /usr/lib/lua/luci/controller/shadowsocksr.lua' >> openwrt/package/default-settings/files/zzz-default-settings        
+       # sed -i 's/\"network\"/\"control\"/g' openwrt/package/OpenAppFilter/luci-app-oaf/luasrc/controller/appfilter.lua
+       # sed -i 's/\"services\"/\"vpn\"/g' openwrt/package/openwrt-packages/luci-app-openclash/files/usr/lib/lua/luci/controller/openclash.lua      
             
     - name: Clone Config
       env: 
