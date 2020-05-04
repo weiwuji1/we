@@ -66,7 +66,7 @@ jobs:
           sed -i 's/\"services\"/\"control\"/g' feeds/luci/applications/luci-app-nft-qos/luasrc/controller/nft-qos.lua
           sed -i 's/\"services\"/\"system\"/g' feeds/luci/applications/luci-app-ttyd/luasrc/controller/ttyd.lua                   
           sed -i 's/\"network\"/\"control\"/g' package/openwrt-packages/luci-app-eqos/luasrc/controller/eqos.lua
-          sed -i 's/\"services\"/\"vpn\"/g' /package/openwrt-packages/luci-app-ssr-plus/luasrc/controller/shadowsocksr.lua 
+          sed -i 's/\"services\"/\"vpn\"/g' package/openwrt-packages/luci-app-ssr-plus/luasrc/controller/shadowsocksr.lua 
           sed -i 's/\"network\"/\"control\"/g' package/OpenAppFilter/luci-app-oaf/luasrc/controller/appfilter.lua
           sed -i 's/\"services\"/\"vpn\"/g' package/openwrt-packages/luci-app-openclash/files/usr/lib/lua/luci/controller/openclash.lua      
         # echo "sed -i 's/\"services\"/\"vpn\"/g' /usr/lib/lua/luci/controller/openclash.lua" >> openwrt/package/default-settings/files/zzz-default-settings
