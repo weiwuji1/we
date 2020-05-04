@@ -60,13 +60,7 @@ jobs:
        # echo "sed -i 's/\"services\"/\"system\"/g' /usr/lib/lua/luci/controller/ttyd.lua" >> openwrt/package/default-settings/files/zzz-default-settings
        # sed -i 's#page = entry({"admin", "network"#page = entry({"admin", "control"#g' openwrt/package/OpenAppFilter/luci-app-oaf/luasrc/controller/appfilter.lua #更换应用控制菜单
        # svn checkout https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-cifs-mount openwrt/package/my/luci-app-cifs-mount  
-        
-    - name: SSH connection to Actions
-      env:
-        SSH_ACTIONS: true
-      uses: P3TERX/debugger-action@master
-      if: env.SSH_ACTIONS == 'true'
-    
+           
     - name: Clone Config
       env: 
           REPO_URL: https://github.com/weiwuji1/we
@@ -75,7 +69,13 @@ jobs:
     
     - name: Update feeds
       run: cd openwrt && ./scripts/feeds update -a
-          
+   
+    - name: SSH connection to Actions
+      env:
+        SSH_ACTIONS: true
+      uses: P3TERX/debugger-action@master
+      if: env.SSH_ACTIONS == 'true'    
+        
     - name: Install feeds
       run: | 
           cd openwrt && ./scripts/feeds install -a
