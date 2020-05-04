@@ -71,7 +71,10 @@ jobs:
       run: cd openwrt && ./scripts/feeds update -a
           
     - name: Install feeds
-      run: cd openwrt && ./scripts/feeds install -a
+      run: | 
+          cd openwrt && ./scripts/feeds install -a
+          sed -i 's/\"services\"/\"control\"/g' openwrt/package/feeds/luci/luci-app-nft-qos/luasrc/controller/nft-qos.lua
+          sed -i 's/\"services\"/\"system\"/g' openwrt/package/feeds/luci/luci-app-ttyd/luasrc/controller/ttyd.lua
     
     - name: Custom configure file
       run: |
@@ -86,7 +89,7 @@ jobs:
           make defconfig
     - name: SSH connection to Actions
       env:
-        SSH_ACTIONS: true
+        SSH_ACTIONS: false
       uses: P3TERX/debugger-action@master
       if: env.SSH_ACTIONS == 'true'
 
