@@ -63,6 +63,9 @@ jobs:
       run: |
           cd openwrt
           sed -i 's#192.168.1.1#10.1.1.11#g' package/base-files/files/bin/config_generate #定制默认IP
+          sed -i 's/\"services\"/\"control\"/g' `grep \"services\" -rl feeds/luci/applications/luci-app-nft-qos`
+          sed -i 's/\"services\"/\"system\"/g' `grep \"services\" -rl feeds/luci/applications/luci-app-ttyd`                   
+          sed -i 's/\"network\"/\"control\"/g' `grep \"network\" -rl package/openwrt-packages/luci-app-eqos`
           sed -i "s/services/vpn/g" `grep services -rl package/openwrt-packages/luci-app-ssr-plus` 
           sed -i 's/\"network\"/\"control\"/g' `grep \"network\" -rl package/OpenAppFilter/luci-app-oaf`
           sed -i "s/services/vpn/g" `grep services -rl package/openwrt-packages/luci-app-openclash`      
