@@ -63,12 +63,18 @@ jobs:
       run: |
           cd openwrt
           sed -i 's#192.168.1.1#10.1.1.11#g' package/base-files/files/bin/config_generate #定制默认IP
-          sed -i 's/\"services\"/\"control\"/g' feeds/luci/applications/luci-app-nft-qos/luasrc/controller/nft-qos.lua
-          sed -i 's/\"services\"/\"system\"/g' feeds/luci/applications/luci-app-ttyd/luasrc/controller/ttyd.lua                   
-          sed -i 's/\"network\"/\"control\"/g' package/openwrt-packages/luci-app-eqos/luasrc/controller/eqos.lua
-          sed -i 's/\"services\"/\"vpn\"/g' package/openwrt-packages/luci-app-ssr-plus/luasrc/controller/shadowsocksr.lua 
-          sed -i 's/\"network\"/\"control\"/g' package/OpenAppFilter/luci-app-oaf/luasrc/controller/appfilter.lua
-          sed -i 's/\"services\"/\"vpn\"/g' package/openwrt-packages/luci-app-openclash/files/usr/lib/lua/luci/controller/openclash.lua      
+          sed -i 's/\"services\"/\"control\"/g' `grep \"services\" -rl feeds/luci/applications/luci-app-nft-qos`
+          sed -i 's/\"services\"/\"system\"/g' `grep \"services\" -rl feeds/luci/applications/luci-app-ttyd`                   
+          sed -i 's/\"network\"/\"control\"/g' `grep \"network\" -rl package/openwrt-packages/luci-app-eqos`
+          sed -i 's/\"services\"/\"vpn\"/g' `grep \"services\" -rl package/openwrt-packages/luci-app-ssr-plus` 
+          sed -i 's/\"network\"/\"control\"/g' `grep \"network\" -rl package/OpenAppFilter/luci-app-oaf`
+          sed -i 's/\"services\"/\"vpn\"/g' `grep \"services\" -rl package/openwrt-packages/luci-app-openclash`      
+        # sed -i 's/\"services\"/\"control\"/g' feeds/luci/applications/luci-app-nft-qos/luasrc/controller/nft-qos.lua
+        # sed -i 's/\"services\"/\"system\"/g' feeds/luci/applications/luci-app-ttyd/luasrc/controller/ttyd.lua                   
+        # sed -i 's/\"network\"/\"control\"/g' package/openwrt-packages/luci-app-eqos/luasrc/controller/eqos.lua
+        # sed -i 's/\"services\"/\"vpn\"/g' package/openwrt-packages/luci-app-ssr-plus/luasrc/controller/shadowsocksr.lua 
+        # sed -i 's/\"network\"/\"control\"/g' package/OpenAppFilter/luci-app-oaf/luasrc/controller/appfilter.lua
+        # sed -i 's/\"services\"/\"vpn\"/g' package/openwrt-packages/luci-app-openclash/files/usr/lib/lua/luci/controller/openclash.lua      
         # echo "sed -i 's/\"services\"/\"vpn\"/g' /usr/lib/lua/luci/controller/openclash.lua" >> openwrt/package/default-settings/files/zzz-default-settings
         # echo "sed -i 's/\"services\"/\"vpn\"/g' /usr/lib/lua/luci/controller/shadowsocksr.lua" >> openwrt/package/default-settings/files/zzz-default-settings
         # echo "sed -i 's/\"network\"/\"control\"/g' /usr/lib/lua/luci/controller/eqos.lua" >> openwrt/package/default-settings/files/zzz-default-settings
