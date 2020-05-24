@@ -42,13 +42,13 @@ jobs:
         REPO_BRANCH: dev-master
       run: | 
          git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
-         git clone https://github.com/kenzok8/openwrt-packages openwrt/package/openwrt-packages        
-         git clone https://github.com/lisaac/luci-app-diskman openwrt/package/lean/luci-app-diskman        
+         git clone https://github.com/kenzok8/openwrt-packages openwrt/package/openwrt-packages                
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-koolproxyR openwrt/package/my/luci-app-koolproxyR
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-theme-tomato openwrt/package/my/luci-theme-tomato
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-serverchan openwrt/package/my/luci-app-serverchan   
-         mkdir -p openwrt/package/lean/parted && cp -i openwrt/package/lean/luci-app-diskman/Parted.Makefile openwrt/package/lean/parted/Makefile
-       # svn checkout https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-cifs-mount openwrt/package/my/luci-app-cifs-mount  
+       # mkdir -p openwrt/package/lean/parted && cp -i openwrt/package/lean/luci-app-diskman/Parted.Makefile openwrt/package/lean/parted/Makefile
+       # svn checkout https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-cifs-mount openwrt/package/my/luci-app-cifs-mount
+       # git clone https://github.com/lisaac/luci-app-diskman openwrt/package/lean/luci-app-diskman
            
     - name: Clone Config
       env: 
@@ -59,7 +59,7 @@ jobs:
     - name: Update feeds
       run: cd openwrt && ./scripts/feeds update -a
     
-    - name: diy menu
+    - name: Diy menu
       run: |
           cd openwrt
           sed -i 's#192.168.1.1#10.1.1.11#g' package/base-files/files/bin/config_generate #定制默认IP
