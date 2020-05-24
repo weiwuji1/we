@@ -45,7 +45,8 @@ jobs:
          git clone https://github.com/kenzok8/openwrt-packages openwrt/package/openwrt-packages                
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-koolproxyR openwrt/package/my/luci-app-koolproxyR
          svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-theme-tomato openwrt/package/my/luci-theme-tomato
-         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-serverchan openwrt/package/my/luci-app-serverchan   
+         svn checkout https://github.com/Leo-Jo-My/openwrt18.06/trunk/package/my/luci-app-serverchan openwrt/package/my/luci-app-serverchan
+         svn checkout https://github.com/coolsnowwolf/lede/trunk/package/network/services/samba36 openwrt/package/network/services/samba36   
        # mkdir -p openwrt/package/lean/parted && cp -i openwrt/package/lean/luci-app-diskman/Parted.Makefile openwrt/package/lean/parted/Makefile
        # svn checkout https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-cifs-mount openwrt/package/my/luci-app-cifs-mount
        # git clone https://github.com/lisaac/luci-app-diskman openwrt/package/lean/luci-app-diskman
