@@ -17,8 +17,8 @@ on:
   #  - cron: 0 0 1 * *
   watch:
     types: started
-      branches:
-        - master
+    branches:
+      - master
 
 jobs:
   build:
