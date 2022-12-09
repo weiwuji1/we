@@ -13,10 +13,10 @@ on:
 # push:
 #   branches: 
 #     - master
-  watch:
-    types: [started]
-    branches: 
-      - master
+# watch:
+#   types: [started]
+#   branches: 
+#     - master
 
 jobs:
   build:
