@@ -10,11 +10,11 @@
 name: OpenWrt-lean
 
 on:
-  push:
-    branches: 
-      - master
-  schedule:
-    - cron: 0 0 1 * *
+  #push:
+  #  branches: 
+  #    - master
+  #schedule:
+  #  - cron: 0 0 1 * *
   watch:
     types: started
 
