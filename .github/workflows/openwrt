@@ -24,10 +24,10 @@ jobs:
     if: github.event.repository.owner.id == github.event.sender.id
 
     steps:
-      - name: Checkout
+      - name: 检查
         uses: actions/checkout@master
 
-      - name: Initialization environment
+      - name: 初始化环境
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
@@ -35,44 +35,33 @@ jobs:
           sudo -E apt-get -yqq install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch python3 unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs git-core gcc-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler g++-multilib
           sudo -E apt-get -y autoremove --purge
           sudo -E apt-get clean
-      - name: Download lede
+      - name: 克隆源代码并自定义配置
         run: |
           git clone https://github.com/coolsnowwolf/lede
           cp .config ./lede/.config
           mv ./lede/* ./
-      - name: Install Helloword
+      - name: 自定义配置
         run: |
-          echo "src-git helloworld https://github.com/fw876/helloworld" >> ./feeds.conf.default 
-      - name: Install OpenClash
-        run: |
-          mkdir package/luci-app-openclash
-          cd package/luci-app-openclash
-          git init
-          git remote add -f origin https://github.com/vernesong/OpenClash.git
-          git config core.sparsecheckout true
-          echo "luci-app-openclash" >> .git/info/sparse-checkout
-          git pull --depth 1 origin master
-          git branch --set-upstream-to=origin/master master
-          pushd luci-app-openclash/tools/po2lmo
-          make && sudo make install
-          popd
-      - name: Update feeds
+          sed -i '$a src-git smpackage https://github.com/kenzok8/small-package' feeds.conf.default
+          sed -i 's/192.168.1.1/10.1.1.110/g' package/base-files/files/bin/config_generate
+     
+      - name: 更新 & 安装 feeds
         run: |
           ./scripts/feeds update -a
           ./scripts/feeds install -a
       - name: Costom configure file
         run: |
           make defconfig
-      - name: Download package source code
+      - name: 下载包文件
         run: |
           make download -j8
           find dl -size -1024c -exec ls -l {} \;
           find dl -size -1024c -exec rm -f {} \;
-      - name: Compile firmware
+      - name: 编译固件
         run: |
           echo -e "$(nproc) thread build."
           make -j$(nproc) V=s
-      - name : Upload artifact
+      - name : 上传固件
         uses: actions/upload-artifact@master
         with:
           name: OpenWrt_firmware
