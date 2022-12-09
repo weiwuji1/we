@@ -27,7 +27,7 @@ jobs:
 
     steps:
       - name: 检查
-        uses: actions/checkout@master
+        uses: actions/checkout@main
       - name: 初始化环境
         env:
           DEBIAN_FRONTEND: noninteractive
