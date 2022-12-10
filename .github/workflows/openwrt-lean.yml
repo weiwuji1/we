@@ -24,7 +24,7 @@ env:
   
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: github.event.repository.owner.id == github.event.sender.id
 
     steps:
@@ -83,10 +83,10 @@ jobs:
         run: |
           rm -rf ./artifact/
           mkdir -p ./artifact/
-          find openwrt/bin/targets/ -name "*sysupgrade*bin*" | xargs -i mv -f {} ./artifact/
-          find openwrt/bin/targets/ -name "*combined*img*" | xargs -i mv -f {} ./artifact/
-          find openwrt/bin/targets/ -name "*rootfs*tar*" | xargs -i mv -f {} ./artifact/
-          find openwrt/bin/packages/ -type d -name "x86_64" | xargs -i mv -f {} ./artifact/
+          find bin/targets/ -name "*sysupgrade*bin*" | xargs -i mv -f {} ./artifact/
+          find bin/targets/ -name "*combined*img*" | xargs -i mv -f {} ./artifact/
+          find bin/targets/ -name "*rootfs*tar*" | xargs -i mv -f {} ./artifact/
+          find bin/packages/ -type d -name "x86_64" | xargs -i mv -f {} ./artifact/
       - name : 上传固件目录
         uses: actions/upload-artifact@master
         with:
