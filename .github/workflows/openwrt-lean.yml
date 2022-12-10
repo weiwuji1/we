@@ -81,15 +81,40 @@ jobs:
           make -j$(nproc) V=s
       - name: 整理固件
         run: |
-          rm -rf ./artifact/
-          mkdir -p ./artifact/
-          find bin/targets/ -name "*sysupgrade*bin*" | xargs -i mv -f {} ./artifact/
-          find bin/targets/ -name "*combined*img*" | xargs -i mv -f {} ./artifact/
-          find bin/targets/ -name "*rootfs*tar*" | xargs -i mv -f {} ./artifact/
-          find bin/packages/ -type d -name "x86_64" | xargs -i mv -f {} ./artifact/
-      - name : 上传固件目录
+          #rm -rf ./artifact/
+          #mkdir -p ./artifact/
+          #find bin/targets/ -name "*sysupgrade*bin*" | xargs -i mv -f {} ./artifact/
+          #find bin/targets/ -name "*combined*img*" | xargs -i mv -f {} ./artifact/
+          #find bin/targets/ -name "*rootfs*tar*" | xargs -i mv -f {} ./artifact/
+          #find bin/packages/ -type d -name "x86_64" | xargs -i mv -f {} ./artifact/
+          mkdir -p ./artifact/firmware
+          mkdir -p ./artifact/package
+          #mkdir -p ./artifact/buildinfo
+          rm -rf $(find ./bin/targets/ -type d -name "packages")
+          cp -rf $(find ./bin/targets/ -type f) ./artifact/firmware/
+          cp -rf $(find ./bin/packages/ -type f -name "*.ipk") ./artifact/package/
+          #cp -rf $(find ./bin/targets/ -type f -name "*.buildinfo" -o -name "*.manifest") ./artifact/buildinfo/          
+          
+     # - name : 上传固件目录
+        #uses: actions/upload-artifact@master
+        #with:
+          #name: OpenWrt_firmware
+          #path: ./artifact/
+          
+      #- name: Deliver buildinfo
+        #uses: actions/upload-artifact@master
+        #with:
+          #name: OpenWrt_buildinfo
+          #path: ./artifact/buildinfo/
+
+      - name: 上传IPK包
+        uses: actions/upload-artifact@master
+        with:
+          name: OpenWrt_package
+          path: ./artifact/package/
+
+      - name: 上传固件包
         uses: actions/upload-artifact@master
         with:
           name: OpenWrt_firmware
-          path: ./artifact/
-          
+          path: ./bin/targets/
