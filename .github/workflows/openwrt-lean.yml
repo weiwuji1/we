@@ -61,11 +61,11 @@ jobs:
           sed -i 's/v$date1/Nov/g' package/lean/default-settings/files/zzz-default-settings
           cp -f feeds/smpackage/diy/banner package/base-files/files/etc/banner
           sed -i 's/%D %V, %C/openwrt Nov by wei/g' package/base-files/files/etc/banner
-          sed -i '/DEFAULT_luci-app-wol/Id'.config
-          sed -i '/DEFAULT_luci-app-accesscontrol/Id'.config
-          sed -i '/DEFAULT_luci-app-ddns/Id'.config
-          sed -i '/DEFAULT_luci-app-nlbwmon/Id'.config
-          sed -i '/DEFAULT_luci-app-vsftpd/Id'.config
+          sed -i '/CONFIG_DEFAULT_luci-app-wol/d'.config
+          sed -i '/CONFIG_DEFAULT_luci-app-accesscontrol/d'.config
+          sed -i '/CONFIG_DEFAULT_luci-app-ddns/d'.config
+          sed -i '/CONFIG_DEFAULT_luci-app-nlbwmon/d'.config
+          sed -i '/CONFIG_DEFAULT_luci-app-vsftpd/d'.config
           sed -i 's/luci-app-unblockmusic/luci-app-unblockneteasemusic/g' .config
           sed -i 's/luci-app-xlnetacc/luci-app-softethervpn/g' .config
           sed -i 's/luci-app-samba4=y/luci-app-samba4=m/g' .config        
