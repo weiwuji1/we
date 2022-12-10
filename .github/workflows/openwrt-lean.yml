@@ -48,23 +48,19 @@ jobs:
           git clone https://github.com/coolsnowwolf/lede
           cp .config ./lede/.config
           mv ./lede/* ./
-          git clone https://github.com/kenzok8/openwrt-packages.git package/openwrt-packages
+          sed -i '$a src-git smpackage https://github.com/kenzok8/small-package' feeds.conf.default
+        # git clone https://github.com/kenzok8/openwrt-packages.git package/openwrt-packages
+      - name: 更新 & 安装 feeds
+        run: |
+          ./scripts/feeds update -a
+          ./scripts/feeds install -a
       - name: 自定义配置
         run: |
-          sed -i '$a src-git smpackage https://github.com/kenzok8/small-package' feeds.conf.default
           sed -i 's/192.168.1.1/10.1.1.110/g' package/base-files/files/bin/config_generate
           cp -f default-settings package/lean/default-settings/files/zzz-default-settings
           sed -i 's/v$date1/Nov/g' package/lean/default-settings/files/zzz-default-settings
           cp -f feeds/smpackage/diy/banner package/base-files/files/etc/banner
           sed -i 's/%D %V, %C/openwrt Nov by wei/g' package/base-files/files/etc/banner
-        # cp -f feeds/smpackage/diy/index_x86.htm package/lean/autocore/files/x86/index.htm
-        # cp -f feeds/smpackage/diy/${{matrix.target}}.config .config && make defconfig
-      - name: 更新 & 安装 feeds
-        run: |
-          ./scripts/feeds update -a
-          ./scripts/feeds install -a
-      - name: 定制配置文件
-        run: |
           sed -i 's/luci-app-unblockmusic/luci-app-unblockneteasemusic/g' .config
           sed -i 's/luci-app-xlnetacc/luci-app-softethervpn/g' .config
           sed -i 's/luci-app-vsftpd=y/luci-app-vsftpd=m/g' .config
@@ -75,6 +71,8 @@ jobs:
           sed -i 's/luci-app-accesscontrol=y/luci-app-accesscontrol=m/g' .config
         # sed -i "/CONFIG_TARGET_IMAGES_GZIP=y/a\CONFIG_TARGET_ROOTFS_TARGZ=y" .config
         # sed -i "/CONFIG_TARGET_ROOTFS_TARGZ=y/a\CONFIG_TARGET_ROOTFS_SQUASHFS=y" .config
+        # cp -f feeds/smpackage/diy/index_x86.htm package/lean/autocore/files/x86/index.htm
+        # cp -f feeds/smpackage/diy/${{matrix.target}}.config .config && make defconfig 
           
       - name: 自定义配置文件
         run: |
