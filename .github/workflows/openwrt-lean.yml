@@ -45,6 +45,7 @@ jobs:
           git clone https://github.com/coolsnowwolf/lede
           cp .config ./lede/.config
           mv ./lede/* ./
+          git clone https://github.com/kenzok8/openwrt-packages.git package/openwrt-packages
       - name: 自定义配置
         run: |
           sed -i '$a src-git smpackage https://github.com/kenzok8/small-package' feeds.conf.default
