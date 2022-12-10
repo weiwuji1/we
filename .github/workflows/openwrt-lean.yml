@@ -71,11 +71,11 @@ jobs:
           
       - name: 自定义配置文件
         run: |
-          sed -i '/CONFIG_DEFAULT_luci-app-wol/d'.config
-          sed -i '/CONFIG_DEFAULT_luci-app-accesscontrol/d'.config
-          sed -i '/CONFIG_DEFAULT_luci-app-ddns/d'.config
-          sed -i '/CONFIG_DEFAULT_luci-app-nlbwmon/d'.config
-          sed -i '/CONFIG_DEFAULT_luci-app-vsftpd/d'.config
+          sed -i '/CONFIG_DEFAULT_luci-app-wol=y/d'.config
+          sed -i '/CONFIG_DEFAULT_luci-app-accesscontrol=y/d'.config
+          sed -i '/CONFIG_DEFAULT_luci-app-ddns=y/d'.config
+          sed -i '/CONFIG_DEFAULT_luci-app-nlbwmon=y/d'.config
+          sed -i '/CONFIG_DEFAULT_luci-app-vsftpd=y/d'.config
           make defconfig
       - name: 下载包文件
         run: |
