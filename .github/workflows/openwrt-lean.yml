@@ -47,8 +47,8 @@ jobs:
         run: |
           git clone https://github.com/coolsnowwolf/lede
           cp .config ./lede/.config
+          sed -i '$a src-git smpackage https://github.com/kenzok8/small-package' ./lede/feeds.conf.default
           mv ./lede/* ./
-          sed -i '$a src-git smpackage https://github.com/kenzok8/small-package' feeds.conf.default
         # git clone https://github.com/kenzok8/openwrt-packages.git package/openwrt-packages
       - name: 更新 & 安装 feeds
         run: |
@@ -60,15 +60,7 @@ jobs:
           cp -f default-settings package/lean/default-settings/files/zzz-default-settings
           sed -i 's/v$date1/Nov/g' package/lean/default-settings/files/zzz-default-settings
           cp -f feeds/smpackage/diy/banner package/base-files/files/etc/banner
-          sed -i 's/%D %V, %C/openwrt Nov by wei/g' package/base-files/files/etc/banner
-          sed -i '/CONFIG_DEFAULT_luci-app-wol/d' .config
-          sed -i '/CONFIG_DEFAULT_luci-app-accesscontrol/d' .config
-          sed -i '/CONFIG_DEFAULT_luci-app-ddns/d' .config
-          sed -i '/CONFIG_DEFAULT_luci-app-nlbwmon/d' .config
-          sed -i '/CONFIG_DEFAULT_luci-app-vsftpd/d' .config
-          sed -i 's/luci-app-unblockmusic/luci-app-unblockneteasemusic/g' .config
-          sed -i 's/luci-app-xlnetacc/luci-app-softethervpn/g' .config
-          sed -i 's/luci-app-samba4=y/luci-app-samba4=m/g' .config        
+          sed -i 's/%D %V, %C/openwrt Nov by Wei/g' package/base-files/files/etc/banner       
         # sed -i "/CONFIG_TARGET_IMAGES_GZIP=y/a\CONFIG_TARGET_ROOTFS_TARGZ=y" .config
         # sed -i "/CONFIG_TARGET_ROOTFS_TARGZ=y/a\CONFIG_TARGET_ROOTFS_SQUASHFS=y" .config
         # cp -f feeds/smpackage/diy/index_x86.htm package/lean/autocore/files/x86/index.htm
@@ -77,6 +69,14 @@ jobs:
       - name: 自定义配置文件
         run: |
           make defconfig
+          sed -i '/CONFIG_DEFAULT_luci-app-wol/d' .config
+          sed -i '/CONFIG_DEFAULT_luci-app-accesscontrol/d' .config
+          sed -i '/CONFIG_DEFAULT_luci-app-ddns/d' .config
+          sed -i '/CONFIG_DEFAULT_luci-app-nlbwmon/d' .config
+          sed -i '/CONFIG_DEFAULT_luci-app-vsftpd/d' .config
+          sed -i 's/luci-app-unblockmusic/luci-app-unblockneteasemusic/g' .config
+          sed -i 's/luci-app-xlnetacc/luci-app-softethervpn/g' .config
+          sed -i 's/luci-app-samba4=y/luci-app-samba4=m/g' .config 
       - name: 下载包文件
         run: |
           make download -j8
