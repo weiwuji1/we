@@ -61,9 +61,9 @@ jobs:
           sed -i 's/v$date1/Nov/g' package/lean/default-settings/files/zzz-default-settings
           cp -f feeds/smpackage/diy/banner package/base-files/files/etc/banner
           sed -i 's/%D %V, %C/openwrt Nov by Wei/g' package/base-files/files/etc/banner       
+          cp -f feeds/smpackage/diy/index_x86.htm package/lean/autocore/files/x86/index.htm
         # sed -i "/CONFIG_TARGET_IMAGES_GZIP=y/a\CONFIG_TARGET_ROOTFS_TARGZ=y" .config
-        # sed -i "/CONFIG_TARGET_ROOTFS_TARGZ=y/a\CONFIG_TARGET_ROOTFS_SQUASHFS=y" .config
-        # cp -f feeds/smpackage/diy/index_x86.htm package/lean/autocore/files/x86/index.htm
+        # sed -i "/CONFIG_TARGET_ROOTFS_TARGZ=y/a\CONFIG_TARGET_ROOTFS_SQUASHFS=y" .config      
         # cp -f feeds/smpackage/diy/${{matrix.target}}.config .config && make defconfig 
           
       - name: 自定义配置文件
