@@ -149,17 +149,17 @@ jobs:
         #uses: actions/upload-artifact@master
         #with:
           #name: OpenWrt_buildinfo
-          #path: ./artifact/buildinfo/
+          #path: ./openwrt/artifact/buildinfo/
 
     - name: 上传IPK包
       uses: actions/upload-artifact@master
       with:
           name: OpenWrt_package
-          path: ./artifact/package/
+          path: ./openwrt/artifact/package/
 
     - name: 上传固件包
       uses: actions/upload-artifact@master
       with:
           name: OpenWrt_firmware
-          path: ./bin/targets/
+          path: ./openwrt/bin/targets/
         
