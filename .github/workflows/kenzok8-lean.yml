@@ -4,7 +4,7 @@
 # Author: kenzo
 #=================================================
 
-name: Lean
+name: kenzok8-Lean
 
 on:
   push:
