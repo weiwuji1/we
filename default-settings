@@ -54,11 +54,11 @@ echo "DISTRIB_RELEASE='v$date1'" >> /etc/openwrt_release
 sed -i '/DISTRIB_DESCRIPTION/d' /etc/openwrt_release
 echo "DISTRIB_DESCRIPTION='Openwrt '" >> /etc/openwrt_release
 
-sed -i 's/LuCI Master/wei/g' /usr/lib/lua/luci/version.lua
-sed -i 's/LuCI openwrt-18.06 branch/wei/g' /usr/lib/lua/luci/version.lua
-sed -i 's/LuCI openwrt-18.06-k5.4 branch/wei/g' /usr/lib/lua/luci/version.lua
-sed -i 's/LuCI 17.01 Lienol/wei/g' /usr/lib/lua/luci/version.lua
-sed -i 's/LuCI openwrt-21.02 branch/wei/g' /usr/lib/lua/luci/version.lua
+sed -i 's/LuCI Master/Wei/g' /usr/lib/lua/luci/version.lua
+sed -i 's/LuCI openwrt-18.06 branch/Wei/g' /usr/lib/lua/luci/version.lua
+sed -i 's/LuCI openwrt-18.06-k5.4 branch/Wei/g' /usr/lib/lua/luci/version.lua
+sed -i 's/LuCI 17.01 Lienol/Eei/g' /usr/lib/lua/luci/version.lua
+sed -i 's/LuCI openwrt-21.02 branch/Wei/g' /usr/lib/lua/luci/version.lua
 sed -i '/luciversion/d' /usr/lib/lua/luci/version.lua
 echo 'luciversion = "v$date1"' >> /usr/lib/lua/luci/version.lua
 
