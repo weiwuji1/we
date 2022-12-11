@@ -7,13 +7,15 @@
 name: Lean
 
 on:
-  repository_dispatch:
-  workflow_dispatch:
-    inputs:
-      ssh:
-        description: 'SSH connection to Actions'
-        required: false
-        default: 'false'
+  push:
+    branches: 
+      - master
+  #schedule:
+  #  - cron: 0 0 1 * *
+  #watch:
+   # types: started
+   # branches:
+   #   - master
 
 env:
   UPLOAD_BIN_DIR: false
@@ -93,7 +95,7 @@ jobs:
         cp -f ../we/default-settings package/lean/default-settings/files/zzz-default-settings
         sed -i 's/v$date1/Nov/g' package/lean/default-settings/files/zzz-default-settings
         cp -f feeds/smpackage/diy/banner package/base-files/files/etc/banner
-        sed -i 's/%D %V, %C/openwrt Nov by wei/g' package/base-files/files/etc/banner
+        sed -i 's/%D %V, %C/openwrt Nov by Wei/g' package/base-files/files/etc/banner
         cp -f feeds/smpackage/diy/index_x86.htm package/lean/autocore/files/x86/index.htm
         cp -f feeds/smpackage/diy/${{matrix.target}}.config .config && make defconfig
         
@@ -114,126 +116,44 @@ jobs:
       if: (!cancelled())
       run: df -hT
 
-    - name: 上传bin目录
-      uses: actions/upload-artifact@main
-      if: steps.compile.outputs.status == 'success' && env.UPLOAD_BIN_DIR == 'true'
-      with:
-        name: OpenWrt_bin${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
-        path: openwrt/bin
+    - name: 整理固件
+        working-directory: ./openwrt
+        run: |
+          mkdir -p ./artifact/firmware
+          mkdir -p ./artifact/package
+          #mkdir -p ./artifact/buildinfo
+          rm -rf $(find ./bin/targets/ -type d -name "packages")
+          cp -rf $(find ./bin/targets/ -type f) ./artifact/firmware/
+          cp -rf $(find ./bin/packages/ -type f -name "*.ipk") ./artifact/package/
+          #cp -rf $(find ./bin/packages/ -type f -name "*.buildinfo" -o -name "*.manifest") ./artifact/buildinfo/ 
+        # rm -rf ./artifact/
+          #mkdir -p ./artifact/
+          #find bin/targets/ -name "*sysupgrade*bin*" | xargs -i mv -f {} ./artifact/
+          #find bin/targets/ -name "*combined*img*" | xargs -i mv -f {} ./artifact/
+          #find bin/targets/ -name "*rootfs*tar*" | xargs -i mv -f {} ./artifact/
+          #find bin/packages/ -type d -name "x86_64" | xargs -i mv -f {} ./artifact/
+          
+     # - name : 上传固件目录
+        #uses: actions/upload-artifact@master
+        #with:
+          #name: OpenWrt_firmware
+          #path: ./artifact/
+          
+      #- name: Deliver buildinfo
+        #uses: actions/upload-artifact@master
+        #with:
+          #name: OpenWrt_buildinfo
+          #path: ./artifact/buildinfo/
 
-    - name: 整理文件
-      id: organize
-      if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
-      run: |
-        mkdir firmware
-        mv -f openwrt/bin/targets/*/*/{*combined*,*sysupgrade*} ./firmware/ 2>/dev/null || true
-        cp openwrt/.config  ./firmware/${{matrix.target}}.config
-        cp openwrt/build_dir/target-*/linux-*/linux-*/.config ./firmware/${{matrix.target}}_kernel.config
-        cd firmware
-        echo "v${{ env.date4 }}" > version.txt
-        md5=$((md5sum *squashfs-sysupgrade* || md5sum *squashfs-combined-efi*) | awk '{print $1}') 2>/dev/null
-        echo $md5 >> version.txt
-        rename -v "s/^openwrt/${{ env.VERSION }}-openwrt/" * || true
-        rename -v "s/friendlyarm_//" *gz || true
-        echo $md5 >> version.txt
-        echo ${{matrix.target}} >> version.txt
-        rm -rf sha256sums
-        echo "FIRMWARE=$PWD" >> $GITHUB_ENV
-        
-    - name: 部署文件到服务器
-      uses: easingthemes/ssh-deploy@main
-      with:
-        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        ARGS: "-avzr --exclude="
-        SOURCE: firmware/
-        REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
-        REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
-        REMOTE_USER: root
-        TARGET: "/www/wwwroot/${{ secrets.REMOTE_HOST }}/op/firmware/${{matrix.target}}/"
+      - name: 上传IPK包
+        uses: actions/upload-artifact@master
+        with:
+          name: OpenWrt_package
+          path: ./artifact/package/
 
-    - name: 上传固件目录
-      uses: actions/upload-artifact@main
-      if: steps.organize.outputs.status == 'success' && !cancelled()
-      with:
-        name: ${{ env.date3 }}_${{matrix.target}}
-        path: ${{ env.FIRMWARE }}
-        
-    - name: 设置Docker编译信息
-      uses: docker/setup-buildx-action@master
-      if: env.DOCKER_ID && env.DOCKER_PASSWD
-
-    - name: 登录DockerHub
-      uses: docker/login-action@master
-      if: env.DOCKER_ID && env.DOCKER_PASSWD
-      with:
-        username: ${{ secrets.DOCKER_ID }}
-        password: ${{ secrets.DOCKER_PASSWD }}
-        
-    - name: 编译docker镜像
-      uses: docker/build-push-action@master
-      continue-on-error: true
-      if: env.DOCKER_ID && env.DOCKER_PASSWD && ! contains(github.event.action, 'noser')
-      with:
-        platforms: ${{ env.ARCH }}
-        file: Dockerfile
-        context: .
-        push: true
-        tags: |
-          ${{ secrets.DOCKER_ID }}/openwrt-6p:${{matrix.target}}
-          ${{ env.DOCKERTAG }}        
-
-    - name: 上传固件cowtransfer
-      id: cowtransfer
-      if: steps.organize.outputs.status == 'success' && env.UPLOAD_COWTRANSFER == 'true' && !cancelled()
-      run: |
-        curl -fsSL git.io/file-transfer | sh
-        ./transfer cow --block 2621440 -s -p 64 --no-progress ${FIRMWARE} 2>&1 | tee cowtransfer.log
-        echo "::warning file=cowtransfer.com::$(cat cowtransfer.log | grep https)"
-        echo "::set-output name=url::$(cat cowtransfer.log | grep https | cut -f3 -d" ")"
-
-    - name: 上传固件WeTransfer
-      id: wetransfer
-      if: steps.organize.outputs.status == 'success' && env.UPLOAD_WETRANSFER == 'true' && !cancelled()
-      run: |
-        curl -fsSL git.io/file-transfer | sh
-        ./transfer wet -s -p 16 --no-progress ${FIRMWARE} 2>&1 | tee wetransfer.log
-        echo "::warning file=wetransfer.com::$(cat wetransfer.log | grep https)"
-        echo "::set-output name=url::$(cat wetransfer.log | grep https | cut -f3 -d" ")"
-
-    - name: 生成发布标签
-      id: tag
-      if: env.UPLOAD_RELEASE == 'true' && !cancelled()
-      run: |
-        echo -e "墙内外加速下载 🎈:\n" >> release.txt
-        echo -e "[kenzo] (https://op.dllkids.xyz/op/)\n" >> release.txt
-        touch release.txt
-        [ $UPLOAD_COWTRANSFER = true ] && echo "🔗 [Cowtransfer](${{ steps.cowtransfer.outputs.url }})" >> release.txt
-        [ $UPLOAD_WETRANSFER = true ] && echo "🔗 [WeTransfer](${{ steps.wetransfer.outputs.url }})" >> release.txt
-        echo "::set-output name=status::success"
-
-    - name: 上传固件发布
-      uses: softprops/action-gh-release@v1
-      if: steps.tag.outputs.status == 'success' && !cancelled()
-      env:
-        GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
-      with:
-        files: "${{ env.FIRMWARE }}/*"
-        name: ${{ env.date2 }} ${{matrix.target}}
-        tag_name: ${{ env.date }}_${{matrix.target}}
-        body_path: release.txt
-
-    - name: 删除工作流
-      uses: GitRML/delete-workflow-runs@main
-      with:
-        retain_days: 1
-        keep_minimum_runs: 0
-
-    - name: 删除旧版本
-      uses: dev-drprasad/delete-older-releases@v0.1.0
-      if: env.UPLOAD_RELEASE == 'true' && !cancelled()
-      with:
-        keep_latest: 6
-        delete_tags: true
-      env:
-        GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
+      - name: 上传固件包
+        uses: actions/upload-artifact@master
+        with:
+          name: OpenWrt_firmware
+          path: ./bin/targets/
         
