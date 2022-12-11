@@ -7,8 +7,8 @@
 name: kenzok8-Lean
 
 on:
-  #push:
-    #branches: 
+  push:
+    branches: 
       - master
   #schedule:
   #  - cron: 0 0 1 * *
@@ -84,6 +84,13 @@ jobs:
       run: |
         ./scripts/feeds update -a
         ./scripts/feeds install -a
+        
+    - name: 克隆预设置
+      env: 
+          REPO_URL: https://github.com/weiwuji1/we
+          REPO_BRANCH: master
+      run: git clone --depth 1 $REPO_URL -b $REPO_BRANCH we
+      
     - name: 自定义配置 ${{matrix.target}}
       env:
         CONFIG_FILE: '${{matrix.target}}.config'
@@ -91,12 +98,12 @@ jobs:
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
         chmod +x ./customize.sh && ./customize.sh
         cd openwrt
-        cp -f ../default-settings package/lean/default-settings/files/zzz-default-settings
+        cp -f ../we/default-settings package/lean/default-settings/files/zzz-default-settings
         sed -i 's/v$date1/Nov/g' package/lean/default-settings/files/zzz-default-settings
         cp -f feeds/smpackage/diy/banner package/base-files/files/etc/banner
         sed -i 's/%D %V, %C/openwrt Nov by Wei/g' package/base-files/files/etc/banner
         cp -f feeds/smpackage/diy/index_x86.htm package/lean/autocore/files/x86/index.htm
-        cp -f ../Lean.config .config && make defconfig
+        cp -f ../we/${{matrix.target}}.config.config .config && make defconfig
         
     - name: 下载包文件
       working-directory: ./openwrt
