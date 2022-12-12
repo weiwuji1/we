@@ -13,3 +13,8 @@ https://hackyes.github.io/openwrt-menuconfig/index.html
 等待编译成功后，到Actions里下载固件即可
 
 Fork自：https://github.com/hackyes/OpenWrt-CI
+
+学习大神项目：
+https://github.com/P3TERX/Actions-OpenWrt
+https://github.com/kenzok8/openwrt_Build
+https://github.com/shoucandanghehe/Auto-OpenWrt
