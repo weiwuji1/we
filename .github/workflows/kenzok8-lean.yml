@@ -91,6 +91,15 @@ jobs:
           REPO_URL: https://github.com/weiwuji1/we
           REPO_BRANCH: master
       run: git clone --depth 1 $REPO_URL -b $REPO_BRANCH we
+
+    - name: 释放磁盘空间
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        sudo mkdir -p -m 777 /mnt/openwrt/dl /mnt/openwrt/bin /mnt/openwrt/staging_dir
+        ln -sf /mnt/openwrt/dl openwrt/dl
+        ln -sf /mnt/openwrt/bin openwrt/bin
+        ln -sf /mnt/openwrt/staging_dir openwrt/staging_dir
       
     - name: 自定义配置 ${{matrix.target}}
       env:
@@ -111,10 +120,23 @@ jobs:
       run: |
         make download -j$(nproc)
         find dl -size -1024c -exec rm -f {} \;
-
-    - name: 检查空间使用情况
-      if: (!cancelled())
-      run: df -hT
+        
+    - name: Cache
+      uses: stupidloud/cachewrtbuild@main
+      with:
+        ccache: 'true'
+        mixkey: ${{ matrix.target }}
+        clean: ${{ contains(github.event.action, 'nocache') }}
+        prefix: ${{ github.workspace }}/openwrt
+    
+    - name: Check space usage
+      run: |
+        shopt -s extglob
+        cd openwrt
+        if [[ -f staging_dir/*${{ env.MTARGET }}*/bin ]]; then
+            rm -rf staging_dir/!(*${{ env.MTARGET }}*|host|hostpkg) build_dir/!(*${{ env.MTARGET }}*|host|hostpkg)
+        fi
+        df -hT
 
     - name: 编译固件
       working-directory: ./openwrt
@@ -130,12 +152,12 @@ jobs:
     - name: 整理固件
       working-directory: ./openwrt
       run: |
-        mkdir -p ./artifact/firmware
-        mkdir -p ./artifact/package
+        #mkdir -p ./artifact/firmware
+        #mkdir -p ./artifact/package
         #mkdir -p ./artifact/buildinfo
         rm -rf $(find ./bin/targets/ -type d -name "packages")
-        cp -rf $(find ./bin/targets/ -type f) ./artifact/firmware/
-        cp -rf $(find ./bin/packages/ -type f -name "*.ipk") ./artifact/package/
+        cp -rf $(find ./bin/targets/ -type f) ./bin/
+        cp -rf $(find ./bin/packages/ -type f -name "*.ipk") ./dl/
         #cp -rf $(find ./bin/packages/ -type f -name "*.buildinfo" -o -name "*.manifest") ./artifact/buildinfo/ 
       # rm -rf ./artifact/
         #mkdir -p ./artifact/
@@ -160,11 +182,11 @@ jobs:
       uses: actions/upload-artifact@master
       with:
           name: OpenWrt_package
-          path: ./openwrt/artifact/package/
+          path: ./openwrt/dl/
 
     - name: 上传固件包
       uses: actions/upload-artifact@master
       with:
           name: OpenWrt_firmware
-          path: ./openwrt/bin/targets/
+          path: ./openwrt/bin/
         
