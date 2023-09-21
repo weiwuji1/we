@@ -80,6 +80,12 @@ jobs:
       run: |
         ./scripts/feeds update -a
 
+    - name: 克隆预设置
+      env: 
+          REPO_URL: https://github.com/weiwuji1/we
+          REPO_BRANCH: master
+      run: git clone --depth 1 $REPO_URL -b $REPO_BRANCH we
+
     - name: Defconfig ${{matrix.target}}
       env:
         CONFIG_FILE: '${{matrix.target}}.config'
