@@ -7,8 +7,8 @@
 name: kenzok8-Lean
 
 #on:
-  push:
-    branches: 
+  #push:
+    #branches: 
       - master
   #schedule:
   #  - cron: 0 0 1 * *
