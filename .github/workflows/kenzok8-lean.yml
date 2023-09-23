@@ -6,9 +6,9 @@
 
 name: kenzok8-Lean
 
-#on:
-  #push:
-    #branches: 
+on:
+  push:
+    branches: 
       - master
   #schedule:
   #  - cron: 0 0 1 * *
@@ -43,8 +43,23 @@ jobs:
         target: [Lean]
     
     steps:
+    - name: Free Disk Space (Ubuntu)
+      uses: jlumbroso/free-disk-space@main
+      with:
+        # this might remove tools that are actually needed,
+        # if set to "true" but frees about 6 GB
+        tool-cache: true
+        
+        # all of these default to true, but feel free to set to
+        # "false" if necessary for your workflow
+        android: true
+        dotnet: true
+        haskell: true
+        large-packages: true
+        swap-storage: true
+    
     - name: 检查
-      uses: actions/checkout@main
+      uses: actions/checkout@v3.1.0
 
     - name: 初始化环境
       env:
@@ -78,7 +93,7 @@ jobs:
         git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
         cd openwrt
         sed -i '$a src-git smpackage https://github.com/kenzok8/small-package' feeds.conf.default
-        git clone --depth 1 https://github.com/kenzok8/openwrt-packages -b $REPO_BRANCH package/openwrt-packages
+        #git clone --depth 1 https://github.com/kenzok8/openwrt-packages -b $REPO_BRANCH package/openwrt-packages
 
     - name: 更新 & 安装 feeds
       working-directory: ./openwrt
@@ -113,6 +128,7 @@ jobs:
         cp -f feeds/smpackage/.github/diy/banner package/base-files/files/etc/banner
         sed -i 's/%D %V, %C/openwrt Nov by Wei/g' package/base-files/files/etc/banner
         cp -f feeds/smpackage/.github/diy/index_x86.htm package/lean/autocore/files/x86/index.htm
+        sed -i 's/luci-theme-bootstrap/luci-theme-atmaterial_new/g' feeds/luci/collections/luci/Makefile
         cp -f ../we/${{matrix.target}}.config .config && make defconfig
         
     - name: 下载包文件
