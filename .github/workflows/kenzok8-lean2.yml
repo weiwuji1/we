@@ -6,10 +6,10 @@
 
 name: Lean
 
-#on:
-  #push:
-    #branches: 
-      #- master
+on:
+  push:
+    branches: 
+      - master
 
 env:
   UPLOAD_BIN_DIR: false
@@ -62,16 +62,6 @@ jobs:
         sudo -E apt-get -qq clean ) &
         sudo timedatectl set-timezone "$TZ"
         
-    - name: Get current date
-      id: date
-      run: |
-        echo "date=$(date +'%Y.%m.%d-%H%M')" >> $GITHUB_ENV
-        echo "date2=$(date +'%m/%d %Y')" >> $GITHUB_ENV
-        echo "date3=$(date +'%m.%d')" >> $GITHUB_ENV
-        echo "DOCKERTAG=${{ secrets.DOCKER_ID }}/openwrt-6p:latest" >> $GITHUB_ENV
-        VERSION="$(echo "${{github.event.action}}" | grep -Eo " [0-9.]+" | sed -e 's/ //')" || true
-        [ "$VERSION" ] && echo "VERSION=$VERSION" >> $GITHUB_ENV || echo "VERSION=$(date +'%m.%d')" >> $GITHUB_ENV
-        
     - name: Clone source code
       env: 
         REPO_URL: https://github.com/coolsnowwolf/lede
@@ -113,7 +103,7 @@ jobs:
         cp -f feeds/smpackage/.github/diy/banner package/base-files/files/etc/banner
         sed -i 's/%D %V, %C/openwrt Nov by Wei/g' package/base-files/files/etc/banner
         cp -f feeds/smpackage/.github/diy/index_x86.htm package/lean/autocore/files/x86/index.htm       
-        sed -i 's/luci-theme-bootstrap/luci-theme-atmaterial_new/g' feeds/luci/collections/luci/Makefile
+        sed -i 's/luci-theme-bootstrap/luci-theme-atmaterial_brown/g' feeds/luci/collections/luci/Makefile
         ./scripts/feeds update -a && ./scripts/feeds install -a
         cp -f ../we/${{matrix.target}}.config .config && make defconfig 
         
@@ -158,19 +148,19 @@ jobs:
       if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
       run: |
         mkdir firmware
-        mv -f openwrt/bin/targets/*/*/{*combined*,*sysupgrade*} ./firmware/ 2>/dev/null || true
+        mv -f openwrt/bin/targets/*/*/{*combined*,*sysupgrade*,*rootfs*} ./firmware/ 2>/dev/null || true
         cp openwrt/.config  ./firmware/${{matrix.target}}.config
         cp openwrt/build_dir/target-*/linux-*/linux-*/.config ./firmware/${{matrix.target}}_kernel.config
         cd firmware
         echo "v${{ env.date2 }}" > version.txt
-        md5=$((md5sum *squashfs-sysupgrade* || md5sum *squashfs-combined-efi*) | awk '{print $1}') 2>/dev/null
+        md5=$((md5sum *squashfs-sysupgrade* || md5sum *squashfs-combined-efi* || md5sum *rootfs*) | awk '{print $1}') 2>/dev/null
         echo $md5 >> version.txt
         rename -v "s/^openwrt/${{ env.VERSION }}-openwrt/" * || true
         rename -v "s/friendlyarm_//" *gz || true
         echo $md5 >> version.txt
         echo ${{matrix.target}} >> version.txt
         rm -rf sha256sums
-        echo "FIRMWARE=$PWD" >> $GITHUB_ENV
+        #echo "FIRMWARE=$PWD" >> $GITHUB_ENV
       
     - name: Upload firmware directory
       uses: actions/upload-artifact@main
@@ -178,17 +168,6 @@ jobs:
       with:
         name: ${{ env.date3 }}_${{matrix.target}}
         path: ${{ env.FIRMWARE }}
-            
-    - name: Generate release tag
-      id: tag
-      if: env.UPLOAD_RELEASE == 'true' && !cancelled()
-      run: |
-        echo -e "墙内外加速下载 🎈:\n" >> release.txt
-        echo -e "[kenzo] (https://${{ secrets.REMOTE_HOST }}/op/firmware/${{matrix.target}})\n" >> release.txt
-        touch release.txt
-        [ $UPLOAD_COWTRANSFER = true ] && echo "🔗 [Cowtransfer](${{ steps.cowtransfer.outputs.url }})" >> release.txt
-        [ $UPLOAD_WETRANSFER = true ] && echo "🔗 [WeTransfer](${{ steps.wetransfer.outputs.url }})" >> release.txt
-        echo "status=success" >> $GITHUB_OUTPUT
 
     - name: Upload firmware to release
       uses: softprops/action-gh-release@master
