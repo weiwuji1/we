@@ -106,15 +106,6 @@ jobs:
           REPO_URL: https://github.com/weiwuji1/we
           REPO_BRANCH: master
       run: git clone --depth 1 $REPO_URL -b $REPO_BRANCH we
-
-    - name: 释放磁盘空间
-      env:
-        DEBIAN_FRONTEND: noninteractive
-      run: |
-        sudo mkdir -p -m 777 /mnt/openwrt/dl /mnt/openwrt/bin /mnt/openwrt/staging_dir
-        ln -sf /mnt/openwrt/dl openwrt/dl
-        ln -sf /mnt/openwrt/bin openwrt/bin
-        ln -sf /mnt/openwrt/staging_dir openwrt/staging_dir
       
     - name: 自定义配置 ${{matrix.target}}
       env:
@@ -128,7 +119,7 @@ jobs:
         cp -f feeds/smpackage/.github/diy/banner package/base-files/files/etc/banner
         sed -i 's/%D %V, %C/openwrt Nov by Wei/g' package/base-files/files/etc/banner
         cp -f feeds/smpackage/.github/diy/index_x86.htm package/lean/autocore/files/x86/index.htm
-        sed -i 's/luci-theme-bootstrap/luci-theme-atmaterial_new/g' feeds/luci/collections/luci/Makefile
+        sed -i 's/luci-theme-bootstrap/luci-theme-atmaterial_brown/g' feeds/luci/collections/luci/Makefile
         cp -f ../we/${{matrix.target}}.config .config && make defconfig
         
     - name: 下载包文件
@@ -168,12 +159,12 @@ jobs:
     - name: 整理固件
       working-directory: ./openwrt
       run: |
-        #mkdir -p ./artifact/firmware
-        #mkdir -p ./artifact/package
-        #mkdir -p ./artifact/buildinfo
+        mkdir -p ./artifact/firmware
+        mkdir -p ./artifact/package
+        mkdir -p ./artifact/buildinfo
         rm -rf $(find ./bin/targets/ -type d -name "packages")
-        cp -rf $(find ./bin/targets/ -type f) ./bin/
-        cp -rf $(find ./bin/packages/ -type f -name "*.ipk") ./dl/
+        cp -rf $(find ./bin/targets/ -type f) ./artifact/firmware/
+        cp -rf $(find ./bin/packages/ -type f -name "*.ipk") ./artifact/package/
         #cp -rf $(find ./bin/packages/ -type f -name "*.buildinfo" -o -name "*.manifest") ./artifact/buildinfo/ 
       # rm -rf ./artifact/
         #mkdir -p ./artifact/
@@ -198,11 +189,11 @@ jobs:
       uses: actions/upload-artifact@master
       with:
           name: OpenWrt_package
-          path: ./openwrt/dl/
+          path: ./openwrt/artifact/firmware/
 
     - name: 上传固件包
       uses: actions/upload-artifact@master
       with:
           name: OpenWrt_firmware
-          path: ./openwrt/bin/
+          path: ./openwrt/artifact/package/
         
