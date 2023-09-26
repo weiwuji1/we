@@ -4,12 +4,12 @@
 # Author: kenzo
 #=================================================
 
-name: kenzok8-Lean
+#name: kenzok8-Lean
 
-on:
-  push:
-    branches: 
-      - master
+#on:
+  #push:
+    #branches: 
+      #- master
   #schedule:
   #  - cron: 0 0 1 * *
   #watch:
