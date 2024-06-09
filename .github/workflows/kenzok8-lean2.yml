@@ -4,12 +4,12 @@
 # Author: kenzo
 #=================================================
 
-name: Lean
+#name: Lean
 
 #on:
   #push:
     #branches: 
-      - master
+      #- master
 
 env:
   UPLOAD_BIN_DIR: false
