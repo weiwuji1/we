@@ -6,9 +6,9 @@
 
 name: Lean
 
-on:
-  push:
-    branches: 
+#on:
+  #push:
+    #branches: 
       - master
 
 env:
