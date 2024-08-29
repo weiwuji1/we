@@ -99,7 +99,6 @@ jobs:
         rm -rf feeds/packages/lang/golang
         git clone https://github.com/kenzok8/golang feeds/packages/lang/golang
         cp -f ${{ github.workspace }}/default-settings package/emortal/default-settings/files/99-default-settings
-        cp -f ${{ github.workspace }}/${{matrix.target}}.config feeds/smpackage/.github/diy/${{matrix.target}}.config
         rm -rf feeds/packages/net/{alist,adguardhome,brook,gost,mosdns,redsocks*,smartdns,trojan*,v2ray*,xray*}
         rm -rf feeds/smpackage/luci-theme-design && git clone -b js --single-branch https://github.com/kenzok78/luci-theme-design feeds/smpackage/luci-theme-design
         sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/Makefile
@@ -107,7 +106,7 @@ jobs:
         sed -i "s/%D %V, %C/openwrt $(date +'%m.%d') by Wei/g" package/base-files/files/etc/banner
         #cp -Rf feeds/smpackage/.github/diy/.packages/files/* files
         ./scripts/feeds update -a && ./scripts/feeds install -a
-        cp -f feeds/smpackage/.github/diy/${{matrix.target}}.config .config && make defconfig
+        cp -f ${{ github.workspace }}/${{matrix.target}}.config .config && make defconfig
         
     - name: Download package
       working-directory: ./openwrt
