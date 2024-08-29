@@ -4,18 +4,16 @@
 # Author: kenzo
 #=================================================
 
-#name: kenzok8-Lean
+name: kenzok8-Lean
 
-#on:
-  #push:
-    #branches: 
-      #- master
-  #schedule:
-  #  - cron: 0 0 1 * *
-  #watch:
-   # types: started
-   # branches:
-   #   - master
+on:
+  repository_dispatch:
+  workflow_dispatch:
+    inputs:
+      ssh:
+        description: 'ssh'
+        required: false
+        default: 'false'
 
 env:
   UPLOAD_BIN_DIR: false
