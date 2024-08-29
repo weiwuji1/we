@@ -93,7 +93,7 @@ jobs:
       env:
         CONFIG_FILE: '${{matrix.target}}.config'
       run: |
-        #[ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
+        [ -e $CONFIG_FILE ] && cp $CONFIG_FILE openwrt/.config
         chmod +x ./customize.sh && ./customize.sh
         cd openwrt
         rm -rf feeds/packages/lang/golang
@@ -106,10 +106,6 @@ jobs:
         sed -i "s/%D %V, %C/openwrt $(date +'%m.%d') by Wei/g" package/base-files/files/etc/banner
         #cp -Rf feeds/smpackage/.github/diy/.packages/files/* files
         ./scripts/feeds update -a && ./scripts/feeds install -a
-    
-    - name: List files in workspace
-      run: |
-        ls -l ${{ github.workspace }}
         cp -f ${{ github.workspace }}/${{matrix.target}}.config .config && make defconfig
         
     - name: Download package
