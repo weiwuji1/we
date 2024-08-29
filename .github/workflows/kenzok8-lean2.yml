@@ -4,12 +4,16 @@
 # Author: kenzo
 #=================================================
 
-#name: Lean
+name: Lean
 
-#on:
-  #push:
-    #branches: 
-      #- master
+on:
+  repository_dispatch:
+  workflow_dispatch:
+    inputs:
+      ssh:
+        description: 'ssh'
+        required: false
+        default: 'false'
 
 env:
   UPLOAD_BIN_DIR: false
