@@ -17,7 +17,7 @@ on:
     
 env:
   UPLOAD_BIN_DIR: true
-  UPLOAD_FIRMWARE: false
+  UPLOAD_FIRMWARE: true
   UPLOAD_COWTRANSFER: false
   UPLOAD_WETRANSFER: false
   UPLOAD_RELEASE: false
@@ -142,24 +142,24 @@ jobs:
         name: OpenWrt_bin${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
         path: openwrt/bin
 
-#    - name: Organize files
-#      id: organize
-#      if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
-#      run: |
-#        mkdir firmware
-#        mv -f openwrt/bin/targets/*/*/{*combined*,*sysupgrade*} ./firmware/ 2>/dev/null || true
-#        cp openwrt/.config  ./firmware/${{matrix.target}}.config
-#        cp openwrt/build_dir/target-*/linux-*/linux-*/.config ./firmware/${{matrix.target}}_kernel.config
-#       cd firmware
-#        echo "v${{ env.date2 }}" > version.txt
-#        md5=$((md5sum *squashfs-sysupgrade* || md5sum *squashfs-combined-efi*) | awk '{print $1}') 2>/dev/null
-#        echo $md5 >> version.txt
-#        rename -v "s/^immortalwrt/${{ env.VERSION }}-openwrt/" * || true
-#        rename -v "s/friendlyarm_//" *gz
-#        echo $md5 >> version.txt
-#        echo ${{matrix.target}} >> version.txt     
-#        rm -rf sha256sums
-#        echo "FIRMWARE=$PWD" >> $GITHUB_ENV
+    - name: Organize files
+      id: organize
+      if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
+      run: |
+        mkdir firmware
+        mv -f openwrt/bin/targets/*/*/{*combined*,*sysupgrade*} ./firmware/ 2>/dev/null || true
+        cp openwrt/.config  ./firmware/${{matrix.target}}.config
+        cp openwrt/build_dir/target-*/linux-*/linux-*/.config ./firmware/${{matrix.target}}_kernel.config
+       cd firmware
+        echo "v${{ env.date2 }}" > version.txt
+        md5=$((md5sum *squashfs-sysupgrade* || md5sum *squashfs-combined-efi*) | awk '{print $1}') 2>/dev/null
+        echo $md5 >> version.txt
+        rename -v "s/^immortalwrt/${{ env.VERSION }}-openwrt/" * || true
+        rename -v "s/friendlyarm_//" *gz
+        echo $md5 >> version.txt
+        echo ${{matrix.target}} >> version.txt     
+        rm -rf sha256sums
+        echo "FIRMWARE=$PWD" >> $GITHUB_ENV
         
 #    - name: Deploy imagebuilder to server
 #      uses: easingthemes/ssh-deploy@main
@@ -172,12 +172,12 @@ jobs:
 #        REMOTE_USER: root
 #        TARGET: "/www/wwwroot/${{ secrets.REMOTE_HOST }}/op/firmware/${{matrix.target}}/"       
       
-#    - name: Upload firmware directory
-#      uses: actions/upload-artifact@main
-#      if: steps.organize.outputs.status == 'success' && !cancelled()
-#      with:
-#        name: ${{ env.date3 }} _${{matrix.target}}
-#        path: ${{ env.FIRMWARE }}
+    - name: Upload firmware directory
+      uses: actions/upload-artifact@main
+      if: steps.organize.outputs.status == 'success' && !cancelled()
+      with:
+        name: ${{ env.date3 }} _${{matrix.target}}
+        path: ${{ env.FIRMWARE }}
         
 #    - name: Set Up Docker Buildx
 #      uses: docker/setup-buildx-action@master
