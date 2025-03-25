@@ -46,21 +46,15 @@ echo '[ -n "$(command -v ip6tables)" ] && ip6tables -t nat -A PREROUTING -p tcp 
 sed -i '/option disabled/d' /etc/config/wireless
 sed -i '/set wireless.radio${devidx}.disabled/d' /lib/wifi/mac80211.sh
 
-sed -i '/DISTRIB_REVISION/d' /etc/openwrt_release
-echo "DISTRIB_REVISION='v$(date +'%Y.%m.%d')'" >> /etc/openwrt_release
-sed -i '/DISTRIB_RELEASE/d' /etc/openwrt_release
-echo "DISTRIB_RELEASE='v$(date +'%Y.%m.%d')'" >> /etc/openwrt_release
-sed -i '/DISTRIB_DESCRIPTION/d' /etc/openwrt_release
-echo "DISTRIB_DESCRIPTION='Openwrt '" >> /etc/openwrt_release
+#sed -i '/DISTRIB_REVISION/d' /etc/openwrt_release
+#echo "DISTRIB_REVISION='v$(date +'%Y.%m.%d')'" >> /etc/openwrt_release
+#sed -i '/DISTRIB_RELEASE/d' /etc/openwrt_release
+#echo "DISTRIB_RELEASE='v$(date +'%Y.%m.%d')'" >> /etc/openwrt_release
+#sed -i '/DISTRIB_DESCRIPTION/d' /etc/openwrt_release
+#echo "DISTRIB_DESCRIPTION='Openwrt '" >> /etc/openwrt_release
 
-sed -i 's/LuCI Master/Wei/g' /usr/lib/lua/luci/version.lua
-sed -i 's/LuCI openwrt-21.02 branch/Wei/g' /usr/lib/lua/luci/version.lua
-sed -i 's/LuCI openwrt-18.06 branch/Wei/g' /usr/lib/lua/luci/version.lua
-sed -i 's/LuCI openwrt-18.06-k5.4 branch/Wei/g' /usr/lib/lua/luci/version.lua
-sed -i 's/LuCI 17.01 Lienol/Wei/g' /usr/lib/lua/luci/version.lua
-sed -i 's/LuCI OpenWrt 23.05-SNAPSHOT/Wei/g' /usr/lib/lua/luci/version.lua
-sed -i '/luciversion/d' /usr/lib/lua/luci/version.lua
-echo "luciversion ='$(date +'%m.%d')'" >> /usr/lib/lua/luci/version.lua
+#sed -i -e 's/ImmortalWrt/Openwrt/' -e 's/LuCI [^ ]*/kenzo/g' -e '/luciversion/d' /usr/lib/lua/luci/version.lua
+#echo "luciversion ='$(date +'%m.%d')'" >> /usr/lib/lua/luci/version.lua
 
 sed -i '/log-facility/d' /etc/dnsmasq.conf
 echo "log-facility=/dev/null" >> /etc/dnsmasq.conf
@@ -71,4 +65,6 @@ rm -f /tmp/luci-indexcache
 
 chmod 0755 /etc/init.d/*
 
+sed -i.bak '/^option overlay_root \/overlay/s/^/#/' /etc/opkg.conf
+sed -i.bak '/_smpackage/s#https://[^ ]*/packages/x86_64/smpackage#https://op.dllkids.xyz/packages/x86_64#g' /etc/opkg/distfeeds.conf
 exit 0
