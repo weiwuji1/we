@@ -2,11 +2,12 @@
   "version": 1,
   "rules": [
     {
+      "domain": [
+       "roblox.com"
+      ], 
       "domain_suffix": [
         "roblox.com",
-        "rbxcdn.com",
-        "2kgames.com",
-        "take2games.com"
+        "rbxcdn.com"
       ]
     }
   ]
