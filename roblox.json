@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "domain_suffix": [
+        "roblox.com",
+        "rbxcdn.com",
+        "2kgames.com",
+        "take2games.com"
+      ]
+    }
+  ]
+}
