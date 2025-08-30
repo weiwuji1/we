@@ -4,7 +4,7 @@
   },
   "inbounds": [
     {
-      "type": "socks",          // 或 vmess/vless/trojan，根据你实际客户端选择
+      "type": "socks",
       "listen": "0.0.0.0",
       "port": 1080,
       "settings": {}
