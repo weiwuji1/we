@@ -124,9 +124,7 @@
           "172.31.0.1/30",
           "fdfe:dcba:9876::1/126"
       ]
-    }
-  ],
+    },
     "default_domain_resolver": { "server": "public" },
     "final": "🐠 漏网之鱼"
-  }
 }
