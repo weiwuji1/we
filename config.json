@@ -1,0 +1,80 @@
+{
+  "sub_url": "http://z.yu.mk:3001/ccbb6e1f594f/download/collection/ZJ-singbox?target=sing-box",
+  "log": {
+    "level": "info",
+    "timestamp": true
+  },
+  "dns": {
+    "servers": [
+      { "tag": "dns-direct", "address": "223.5.5.5", "detour": "直连" },
+      { "tag": "dns-remote", "address": "1.1.1.1", "detour": "🚀 默认代理" }
+    ],
+    "rules": [
+      { "outbound": "直连", "server": "dns-direct" },
+      { "outbound": "🚀 默认代理", "server": "dns-remote" }
+    ],
+    "strategy": "prefer_ipv4"
+  },
+  "outbounds": [
+    {
+      "tag": "🇭🇰 香港节点",
+      "type": "selector",
+      "outbounds": [],
+      "filter": ["HK", "HongKong", "香港"]
+    },
+    {
+      "tag": "🇯🇵 日本节点",
+      "type": "selector",
+      "outbounds": [],
+      "filter": ["JP", "Japan", "日本"]
+    },
+    {
+      "tag": "🇸🇬 新加坡节点",
+      "type": "selector",
+      "outbounds": [],
+      "filter": ["SG", "Singapore", "新加坡"]
+    },
+    {
+      "tag": "🇺🇸 美国节点",
+      "type": "selector",
+      "outbounds": [],
+      "filter": ["US", "USA", "美国"]
+    },
+    {
+      "tag": "🚀 默认代理",
+      "type": "selector",
+      "outbounds": [
+        "🇭🇰 香港节点",
+        "🇯🇵 日本节点",
+        "🇸🇬 新加坡节点",
+        "🇺🇸 美国节点"
+      ]
+    },
+    { "tag": "直连", "type": "direct" },
+    { "tag": "阻断", "type": "block" }
+  ],
+  "route": {
+    "auto_detect_interface": true,
+    "rule_set": [
+      { "tag": "geosite-gfw", "type": "remote", "format": "binary", "url": "https://gh-proxy.com/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/gfw.srs", "download_detour": "直连" },
+      { "tag": "geosite-cn", "type": "remote", "format": "binary", "url": "https://gh-proxy.com/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/cn.srs", "download_detour": "直连" },
+      { "tag": "geosite-!cn", "type": "remote", "format": "binary", "url": "https://gh-proxy.com/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.srs", "download_detour": "直连" },
+      { "tag": "geosite-tiktok", "type": "remote", "format": "binary", "url": "https://gh-proxy.com/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/tiktok.srs", "download_detour": "🚀 默认代理" },
+      { "tag": "geosite-netflix", "type": "remote", "format": "binary", "url": "https://gh-proxy.com/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/netflix.srs", "download_detour": "🚀 默认代理" },
+      { "tag": "geosite-openai", "type": "remote", "format": "binary", "url": "https://gh-proxy.com/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/openai.srs", "download_detour": "🚀 默认代理" },
+      { "tag": "geosite-steam", "type": "remote", "format": "binary", "url": "https://gh-proxy.com/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/steam.srs", "download_detour": "🚀 默认代理" }
+    ],
+    "rules": [
+      { "rule_set": "geosite-tiktok", "outbound": "🇸🇬 新加坡节点" },
+      { "rule_set": "geosite-netflix", "outbound": "🇭🇰 香港节点" },
+      { "rule_set": "geosite-openai", "outbound": "🇺🇸 美国节点" },
+      { "rule_set": "geosite-steam", "outbound": "🇯🇵 日本节点" },
+      { "rule_set": "geosite-gfw", "outbound": "🚀 默认代理" },
+      { "rule_set": "geosite-!cn", "outbound": "🚀 默认代理" },
+      { "rule_set": "geosite-cn", "outbound": "直连" },
+      { "rule_set": "geoip-cn", "outbound": "直连" },
+      { "rule_set": "geoip-!cn", "outbound": "🚀 默认代理" },
+      { "outbound": "🚀 默认代理" }
+    ]
+  }
+}
