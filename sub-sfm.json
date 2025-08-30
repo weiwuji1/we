@@ -1,0 +1,32 @@
+{
+  "name": "momo 精细分流模板（韩国版）",
+  "description": "基于 momo 配置，SFM 可用的精细化分流 Sing-box 模板（香港节点替换为韩国节点）",
+  "template": "https://raw.githubusercontent.com/qichiyuhub/rule/refs/heads/main/config/singbox/1.12.x/sub-momofake.json",
+  "outbounds": [
+    { "tag": "🇰🇷 韩国节点", "type": "selector", "outbounds": [], "filter": ["KR","Korea","韩国"] },
+    { "tag": "🇯🇵 日本节点", "type": "selector", "outbounds": [], "filter": ["JP","Japan","日本"] },
+    { "tag": "🇸🇬 新加坡节点", "type": "selector", "outbounds": [], "filter": ["SG","Singapore","新加坡"] },
+    { "tag": "🇺🇸 美国节点", "type": "selector", "outbounds": [], "filter": ["US","USA","美国"] },
+    { "tag": "🚀 默认代理", "type": "selector", "outbounds": ["🇰🇷 韩国节点","🇯🇵 日本节点","🇸🇬 新加坡节点","🇺🇸 美国节点"] },
+    { "tag": "直连", "type": "direct" },
+    { "tag": "阻断", "type": "block" }
+  ],
+  "route": {
+    "rules": [
+      { "rule_set": "geosite-tiktok", "outbound": "🇸🇬 新加坡节点" },
+      { "rule_set": "geosite-netflix", "outbound": "🇰🇷 韩国节点" },
+      { "rule_set": "geosite-disney", "outbound": "🇰🇷 韩国节点" },
+      { "rule_set": "geosite-openai", "outbound": "🇺🇸 美国节点" },
+      { "rule_set": "geosite-steam", "outbound": "🇯🇵 日本节点" },
+      { "rule_set": "geosite-playstation", "outbound": "🇯🇵 日本节点" },
+      { "rule_set": "geosite-nintendo", "outbound": "🇯🇵 日本节点" },
+      { "rule_set": "geosite-gfw", "outbound": "🚀 默认代理" },
+      { "rule_set": "geosite-!cn", "outbound": "🚀 默认代理" },
+      { "rule_set": "geosite-cn", "outbound": "直连" },
+      { "rule_set": "geoip-cn", "outbound": "直连" },
+      { "rule_set": "geoip-!cn", "outbound": "🚀 默认代理" },
+      { "outbound": "🚀 默认代理" }
+    ]
+  },
+  "note": "上传到 Sub-Store 文件管理后，关联你的订阅链接即可实现配置与节点自动整合"
+}
