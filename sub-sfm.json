@@ -12,8 +12,8 @@
     "rules": [
       { "rule_set": "geosite-tiktok", "outbound": "🇸🇬 新加坡节点" },
       { "rule_set": "geosite-netflix", "outbound": "🇰🇷 韩国节点" },
-      { "rule_set": "geosite-disney", "outbound": "🇰🇷 韩国节点" },
-      { "rule_set": "geosite-openai", "outbound": "🇺🇸 美国节点" },
+      { "rule_set": "geosite-youtube", "outbound": "🇰🇷 韩国节点" },
+      { "rule_set": "geosite-ai", "outbound": "🇺🇸 美国节点" },
       { "rule_set": "geosite-steam", "outbound": "🇯🇵 日本节点" },
       { "rule_set": "geosite-playstation", "outbound": "🇯🇵 日本节点" },
       { "rule_set": "geosite-nintendo", "outbound": "🇯🇵 日本节点" },
