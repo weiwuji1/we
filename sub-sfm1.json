@@ -1,4 +1,9 @@
 {
+  "log": {
+    "disabled": false,
+    "level": "info",
+    "timestamp": true
+    }
   "dns": {
     "servers": [
       { "tag": "local", "type": "udp", "server": "223.5.5.5" },
