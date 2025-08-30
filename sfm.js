@@ -1,6 +1,6 @@
-// SFM 专用 template.js
-// 基于 xream 脚本裁剪，支持自动分流节点
-// 去掉不兼容的字段（如 filter），适配 SFM
+// SFM 专用 Sub-Store 魔改 template.js
+// 自动注入订阅节点到指定分组，兼容 Sing-box 1.12.x
+// 保留精细化 MetaCubeX 分流规则
 
 function parseQuery(url) {
   const query = {};
@@ -18,9 +18,8 @@ function parseQuery(url) {
 
 function main(config, proxyGroups, url) {
   const query = parseQuery(url);
-  const outbounds = [];
 
-  // 固定分组（SFM 兼容版）
+  // 定义节点分组
   let groups = [
     { tag: "🇰🇷 韩国节点", keywords: ["kr", "korea", "首尔", "韩国"] },
     { tag: "🇯🇵 日本节点", keywords: ["jp", "japan", "日本", "东京"] },
@@ -28,7 +27,6 @@ function main(config, proxyGroups, url) {
     { tag: "🇺🇸 美国节点", keywords: ["us", "usa", "united states", "美国"] }
   ];
 
-  // 如果用户通过参数定义了 outbound 分组，覆盖默认
   if (query.outbound) {
     groups = query.outbound.split("ℹ️").filter(Boolean).map(item => {
       const [tag, ...keys] = item.split("|");
@@ -36,99 +34,69 @@ function main(config, proxyGroups, url) {
     });
   }
 
-  // 创建 selector 分组
-  groups.forEach(group => {
-    outbounds.push({
-      tag: group.tag,
-      type: "selector",
-      outbounds: []
-    });
-  });
+  // 配置 inbounds（Socks 和 HTTP）
+  config.inbounds = [
+    { type: "socks", listen: "0.0.0.0", port: 1080, settings: {} },
+    { type: "http", listen: "0.0.0.0", port: 1081, settings: {} }
+  ];
 
-  // 默认代理
-  outbounds.push({
+  // 配置 outbounds
+  config.outbounds = groups.map(g => ({ tag: g.tag, type: "selector", outbounds: [] }));
+  config.outbounds.push({
     tag: "🚀 默认代理",
     type: "selector",
     outbounds: groups.map(g => g.tag)
   });
+  config.outbounds.push({ tag: "直连", type: "direct" });
+  config.outbounds.push({ tag: "阻断", type: "block" });
 
-  // 固定直连 / 阻断
-  outbounds.push({ tag: "直连", type: "direct" });
-  outbounds.push({ tag: "阻断", type: "block" });
-
-  // 节点分配到对应分组
+  // 将订阅节点注入分组
   proxyGroups.forEach(node => {
-    let name = node.name.toLowerCase();
+    const name = node.name.toLowerCase();
     let matched = false;
     for (let group of groups) {
       if (group.keywords.some(k => name.includes(k))) {
-        let target = outbounds.find(o => o.tag === group.tag);
+        const target = config.outbounds.find(o => o.tag === group.tag);
         if (target) target.outbounds.push(node.name);
         matched = true;
         break;
       }
     }
     if (!matched) {
-      let def = outbounds.find(o => o.tag === "🚀 默认代理");
+      const def = config.outbounds.find(o => o.tag === "🚀 默认代理");
       if (def) def.outbounds.push(node.name);
     }
   });
 
-  // 加入 MetaCubeX 精细化规则
+  // 配置精细化 MetaCubeX 分流和 geosite-cn / geosite-!cn
   config.route = {
     rule_set: [
-      {
-        tag: "🎵 TikTok",
-        type: "remote",
-        format: "binary",
-        url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/tiktok.srs"
-      },
-      {
-        tag: "🎬 Netflix",
-        type: "remote",
-        format: "binary",
-        url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/netflix.srs"
-      },
-      {
-        tag: "📺 YouTube",
-        type: "remote",
-        format: "binary",
-        url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/youtube.srs"
-      },
-      {
-        tag: "🤖 AI",
-        type: "remote",
-        format: "binary",
-        url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/ai.srs"
-      },
-      {
-        tag: "💬 Telegram",
-        type: "remote",
-        format: "binary",
-        url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/telegram.srs"
-      },
-      {
-        tag: "🎮 Steam",
-        type: "remote",
-        format: "binary",
-        url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/steam.srs"
-      }
+      { tag: "geosite-tiktok", type: "remote", format: "binary", url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/tiktok.srs", download_detour: "🚀 默认代理" },
+      { tag: "geosite-netflix", type: "remote", format: "binary", url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/netflix.srs", download_detour: "🚀 默认代理" },
+      { tag: "geosite-disney", type: "remote", format: "binary", url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/disney.srs", download_detour: "🚀 默认代理" },
+      { tag: "geosite-openai", type: "remote", format: "binary", url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/openai.srs", download_detour: "🚀 默认代理" },
+      { tag: "geosite-steam", type: "remote", format: "binary", url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/steam.srs", download_detour: "🚀 默认代理" },
+      { tag: "geosite-playstation", type: "remote", format: "binary", url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/playstation.srs", download_detour: "🚀 默认代理" },
+      { tag: "geosite-nintendo", type: "remote", format: "binary", url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/nintendo.srs", download_detour: "🚀 默认代理" },
+      { tag: "geosite-gfw", type: "remote", format: "binary", url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/gfw.srs", download_detour: "🚀 默认代理" },
+      { tag: "geosite-!cn", type: "remote", format: "binary", url: "https://gh-proxy.com/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.srs", download_detour: "🚀 默认代理" },
+      { tag: "geosite-cn", type: "remote", format: "binary", url: "https://gh-proxy.com/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/cn.srs", download_detour: "直连" }
     ],
     rules: [
-      { "rule_set": "🎵 TikTok", "outbound": "🚀 默认代理" },
-      { "rule_set": "🎬 Netflix", "outbound": "🚀 默认代理" },
-      { "rule_set": "📺 YouTube", "outbound": "🚀 默认代理" },
-      { "rule_set": "🤖 AI", "outbound": "🚀 默认代理" },
-      { "rule_set": "💬 Telegram", "outbound": "🚀 默认代理" },
-      { "rule_set": "🎮 Steam", "outbound": "🚀 默认代理" },
-      { "domain_suffix": ["cn"], "outbound": "直连" },
-      { "geoip": ["cn"], "outbound": "直连" },
-      { "ip_is_private": true, "outbound": "直连" },
-      { "outbound": "🚀 默认代理" }
+      { rule_set: "geosite-tiktok", outbound: "🇸🇬 新加坡节点" },
+      { rule_set: "geosite-netflix", outbound: "🇰🇷 韩国节点" },
+      { rule_set: "geosite-disney", outbound: "🇰🇷 韩国节点" },
+      { rule_set: "geosite-openai", outbound: "🇺🇸 美国节点" },
+      { rule_set: "geosite-steam", outbound: "🇯🇵 日本节点" },
+      { rule_set: "geosite-playstation", outbound: "🇯🇵 日本节点" },
+      { rule_set: "geosite-nintendo", outbound: "🇯🇵 日本节点" },
+      { rule_set: "geosite-gfw", outbound: "🚀 默认代理" },
+      { rule_set: "geosite-!cn", outbound: "🚀 默认代理" },
+      { rule_set: "geosite-cn", outbound: "直连" },
+      { outbound: "🚀 默认代理" }
     ]
   };
 
-  // 替换原始配置的 outbounds
-  config.outbounds = outbounds;
+  // 返回完整配置
   return config;
 }
