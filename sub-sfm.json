@@ -1,7 +1,4 @@
 {
-  "name": "momo 精细分流模板（韩国版）",
-  "description": "基于 momo 配置，SFM 可用的精细化分流 Sing-box 模板（香港节点替换为韩国节点）",
-  "template": "https://raw.githubusercontent.com/qichiyuhub/rule/refs/heads/main/config/singbox/1.12.x/sub-momofake.json",
   "outbounds": [
     { "tag": "🇰🇷 韩国节点", "type": "selector", "outbounds": [], "filter": ["KR","Korea","韩国"] },
     { "tag": "🇯🇵 日本节点", "type": "selector", "outbounds": [], "filter": ["JP","Japan","日本"] },
