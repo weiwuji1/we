@@ -1,84 +1,104 @@
 #!/bin/sh
+#===============================================
+# 默认设置脚本 - 优化版
+# 功能：系统初始化配置
+# 必要性：★★★★☆ (高)
+#===============================================
 
+#-----------------------------------------------
+# 1. 基础系统配置
+#-----------------------------------------------
+# 创建 crontab 文件 (必需)
 touch /etc/crontabs/root
 
+# 设置 LuCI 语言为中文
 uci set luci.main.lang=zh_cn
-#设置默认主题
-#uci set luci.main.mediaurlbase=/luci-static/bootstrap_mod
 uci commit luci
 
+# 设置时区为中国标准时间
 uci set system.@system[0].timezone=CST-8
 uci set system.@system[0].zonename=Asia/Shanghai
 uci commit system
 
+# 启用自动挂载 (USB 存储设备)
 uci set fstab.@global[0].anon_mount=1
 uci commit fstab
 
-ln -sf /sbin/ip /usr/bin/ip
+# 创建 ip 命令软链接 (兼容性)
+ln -sf /sbin/ip /usr/bin/ip 2>/dev/null
 
+#-----------------------------------------------
+# 2. 软件源配置
+#-----------------------------------------------
+# 清理无效源
 sed -i '/lienol/d' /etc/opkg/distfeeds.conf
 sed -i '/other/d' /etc/opkg/distfeeds.conf
-#sed -i 's/downloads.openwrt.org/openwrt.proxy.ustclug.org/g' /etc/opkg/distfeeds.conf
-#sed -i 's/http/https/g' /etc/opkg/distfeeds.conf
+# 启用所有官方源
 sed -i "s/# //g" /etc/opkg/distfeeds.conf
+# 移除签名验证 (避免安装失败)
 sed -i '/check_signature/d' /etc/opkg.conf
 
-#sed -i 's/root::0:0:99999:7:::/root:$1$V4UetPzk$CYXluq4wUazHjmCDBCqXF.:0:0:99999:7:::/g' /etc/shadow
-
+#-----------------------------------------------
+# 3. 网络配置
+#-----------------------------------------------
+# IPv6 配置
 uci set dhcp.lan.ra='server'
 uci set dhcp.lan.dhcpv6='server'
 uci set dhcp.lan.ra_management='1'
 uci set dhcp.lan.ra_default='1'
-#uci set dhcp.@dnsmasq[0].localservice=0
-#uci set dhcp.@dnsmasq[0].nonwildcard=0
 uci commit dhcp
 
-#uci set network.lan.ipaddr='192.168.119.254'
-#uci set network.lan.netmask='255.255.255.0'
+# 设置 IPv6 前缀长度
 uci set network.lan.ip6assign='64'
 uci commit network
 
-#DNS重定向
-sed -i '/REDIRECT --to-ports 53/d' /etc/firewall.user
-echo "# iptables -t nat -A PREROUTING -p udp --dport 53 -j REDIRECT --to-ports 53" >> /etc/firewall.user
+# DNS 重定向 (可选，如需强制 DNS 走代理则启用)
+# sed -i '/REDIRECT --to-ports 53/d' /etc/firewall.user
+# echo "iptables -t nat -A PREROUTING -p udp --dport 53 -j REDIRECT --to-ports 53" >> /etc/firewall.user
 
-sed -i '/option disabled/d' /etc/config/wireless
-sed -i '/set wireless.radio${devidx}.disabled/d' /lib/wifi/mac80211.sh
-wifi up
+#-----------------------------------------------
+# 4. 无线配置
+#-----------------------------------------------
+# 启用无线 (如果硬件支持)
+sed -i '/option disabled/d' /etc/config/wireless 2>/dev/null
+sed -i '/set wireless.radio.*\.disabled/d' /lib/wifi/mac80211.sh 2>/dev/null
+wifi up 2>/dev/null || true
 
-sed -i '/DISTRIB_REVISION/d' /etc/openwrt_release
-echo "DISTRIB_REVISION='v$(date +'%Y.%m.%d')'" >> /etc/openwrt_release
-sed -i '/DISTRIB_RELEASE/d' /etc/openwrt_release
-echo "DISTRIB_RELEASE='v$(date +'%Y.%m.%d')'" >> /etc/openwrt_release
-sed -i '/DISTRIB_DESCRIPTION/d' /etc/openwrt_release
-echo "DISTRIB_DESCRIPTION='Openwrt '" >> /etc/openwrt_release
+#-----------------------------------------------
+# 5. 版本信息定制
+#-----------------------------------------------
+cat > /etc/openwrt_release << EOF
+DISTRIB_ID='ImmortalWrt'
+DISTRIB_RELEASE='v$(date +'%Y.%m.%d')'
+DISTRIB_REVISION='v$(date +'%Y.%m.%d')'
+DISTRIB_TARGET='x86_64'
+DISTRIB_ARCH='x86_64'
+DISTRIB_DESCRIPTION='ImmortalWrt x86_64 by Wei'
+DISTRIB_TAINTS=''
+EOF
 
-sed -i 's/LuCI Master/Wei/g' /usr/lib/lua/luci/version.lua
-sed -i 's/LuCI openwrt-21.02 branch/Wei/g' /usr/lib/lua/luci/version.lua
-sed -i 's/LuCI openwrt-18.06 branch/Wei/g' /usr/lib/lua/luci/version.lua
-sed -i 's/LuCI openwrt-18.06-k5.4 branch/Wei/g' /usr/lib/lua/luci/version.lua
-sed -i 's/LuCI 17.01 Lienol/Wei/g' /usr/lib/lua/luci/version.lua
-sed -i 's/LuCI OpenWrt 23.05-SNAPSHOT/Wei/g' /usr/lib/lua/luci/version.lua
-sed -i '/luciversion/d' /usr/lib/lua/luci/version.lua
-echo "luciversion ='$(date +'%m.%d')'" >> /usr/lib/lua/luci/version.lua
+# 定制 LuCI 版本信息
+cat > /usr/lib/lua/luci/version.lua << EOF
+luciname = 'LuCI'
+luciversion = 'v$(date +'%m.%d')'
+lucibranch = 'Custom Build'
+disp_version = 'ImmortalWrt by Wei'
+EOF
 
-# 删除状态页不需显示的
-rm -rf /usr/lib/lua/luci/view/admin_status/index
-#mv -f /usr/lib/lua/luci/view/admin_status/index /usr/lib/lua/luci/view/admin_status/index_backup 2>/dev/null
+#-----------------------------------------------
+# 6. 服务优化
+#-----------------------------------------------
+# 禁用不需要的服务 (节省资源)
+for service in php7-fastcgi php7-fpm php8-fastcgi php8-fpm \
+               softethervpnbridge softethervpnserver softethervpnclient \
+               haproxy kcptun; do
+    /etc/init.d/$service disable 2>/dev/null || true
+done
 
-#禁用某些可能会自启动且用不上的依赖包服务
-/etc/init.d/php7-fastcgi disable 2>/dev/null
-/etc/init.d/php7-fpm disable 2>/dev/null
-/etc/init.d/php8-fastcgi disable 2>/dev/null
-/etc/init.d/php8-fpm disable 2>/dev/null
-/etc/init.d/softethervpnbridge disable 2>/dev/null
-/etc/init.d/softethervpnserver disable 2>/dev/null
-/etc/init.d/softethervpnclient disable 2>/dev/null
-/etc/init.d/haproxy disable 2>/dev/null
-/etc/init.d/kcptun disable 2>/dev/null
+# 设置 init 脚本权限
+chmod 0755 /etc/init.d/* 2>/dev/null
 
-chmod 0755 /etc/init.d/*
-
-rm -rf /tmp/luci-*cache
+# 清理缓存
+rm -rf /tmp/luci-*cache 2>/dev/null
 
 exit 0

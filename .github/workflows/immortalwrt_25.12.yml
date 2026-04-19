@@ -4,7 +4,7 @@
 # Author: kenzo
 #=================================================
 
-name: immortalwrt_24.10
+name: immortalwrt_25.12
 
 on:
   repository_dispatch:
@@ -32,7 +32,7 @@ env:
   DOCKER_PASSWD: ${{ secrets.DOCKER_PASSWD }}
   TZ: Asia/Shanghai
   REPO_URL: https://github.com/immortalwrt/immortalwrt
-  REPO_BRANCH: openwrt-24.10
+  REPO_BRANCH: openwrt-25.12
 
 jobs:
   build:
@@ -47,8 +47,8 @@ jobs:
         target: [immortalwrt]
         include:
           - target: immortalwrt
-            config_file: immortalwrt.config
-            device_name: ImmortalWrt
+            config_file: immortalwrt_25.12.config
+            device_name: ImmortalWrt-25.12
 
     steps:
     - name: Maximize build space
@@ -171,7 +171,7 @@ jobs:
       working-directory: ./openwrt
       run: |
         make download -j$(nproc)
-        find dl -size -1024c -exec rm -f {} \;
+        find dl -size -1024c -exec rm -f {} \\;
         echo "Packages downloaded successfully"
 
     - name: Check space usage
@@ -225,4 +225,4 @@ jobs:
       with:
         retain_days: 1
         keep_minimum_runs: 2
-        delete_run_pattern: "immortalwrt_24.10"
+        delete_run_pattern: "immortalwrt_25.12"
