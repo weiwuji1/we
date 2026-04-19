@@ -160,7 +160,7 @@ jobs:
         echo "Customizations applied successfully"
 
     - name: Cache
-      uses: klever1988/cachewrtbuild@v1.3.0
+      uses: klever1988/cachewrtbuild@main
       if: github.event.inputs.clean_cache != 'true'
       with:
         ccache: 'true'
