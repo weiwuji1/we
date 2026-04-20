@@ -1,47 +1,60 @@
 #!/bin/bash
-#===============================================
-# 编译定制脚本 - 优化版
-# 功能：源码级配置修改
-# 必要性：★★★☆☆ (中)
-#===============================================
+#=================================================
+# Description: Customization script for OpenWrt build
+# Author: kenzo
+#=================================================
 
-set -e  # 遇到错误立即退出
+set -e
 
 echo "=== 开始定制配置 ==="
 
-#-----------------------------------------------
-# 1. 修改默认 IP 地址
-# 必要性：★★★☆☆ 
-# 说明：将默认 LAN IP 从 192.168.1.1 改为 10.1.1.110
-#      避免与光猫或其他路由器冲突
-#-----------------------------------------------
+# [1/3] 修改默认 IP 地址为 192.168.100.1 (适配 ImmortalWrt 结构)
 echo "[1/3] 修改默认 IP 地址..."
-sed -i 's/192\.168\.1\.1/10.1.1.110/g' openwrt/package/base-files/files/bin/config_generate
+NETWORK_FILE="package/base-files/files/etc/config/network"
+if [ -f "$NETWORK_FILE" ]; then
+    # 备份原文件
+    cp $NETWORK_FILE $NETWORK_FILE.bak
+    # 修改 lan 接口 IP
+    sed -i 's/ipaddr=192\.168\.1\.1/ipaddr=192.168.100.1/g' $NETWORK_FILE
+    sed -i 's/ipaddr=\"192\.168\.1\.1\"/ipaddr=\"192.168.100.1\"/g' $NETWORK_FILE
+    echo "默认 IP 已修改为 192.168.100.1"
+else
+    echo "警告: 未找到 network 配置文件，跳过 IP 修改。"
+fi
 
-#-----------------------------------------------
-# 2. 修改主机名 (可选)
-# 必要性：★★☆☆☆
-# 说明：设置默认主机名为 ImmortalWrt
-#-----------------------------------------------
-# sed -i 's/OpenWrt/ImmortalWrt/g' openwrt/package/base-files/files/bin/config_generate
+# [2/3] 修改默认主机名
+echo "[2/3] 修改默认主机名..."
+SYSTEM_FILE="package/base-files/files/etc/system.conf"
+if [ -f "$SYSTEM_FILE" ]; then
+    sed -i 's/hostname=OpenWrt/hostname=ImmortalWrt/g' $SYSTEM_FILE
+    echo "主机名已修改为 ImmortalWrt"
+else
+    # 尝试另一种常见路径
+    SYSTEM_FILE_ALT="package/base-files/files/etc/config/system"
+    if [ -f "$SYSTEM_FILE_ALT" ]; then
+        sed -i 's/options system/\&\n\toption hostname '\''ImmortalWrt'\''/g' $SYSTEM_FILE_ALT
+        echo "主机名已修改为 ImmortalWrt (alt)"
+    else
+        echo "警告: 未找到 system 配置文件，跳过主机名修改。"
+    fi
+fi
 
-#-----------------------------------------------
-# 3. 设置 root 密码 (可选，生产环境建议手动设置)
-# 必要性：★☆☆☆☆
-# 说明：如需免密码登录可启用，否则注释掉
-#      密码格式：$1$salt$hashed_password
-#-----------------------------------------------
-# sed -i 's/root::0:0:99999:7:::/root:$1$V4UetPzk$CYXluq4wUazHjmCDBCqXF.:0:0:99999:7:::/g' \
-#     openwrt/package/base-files/files/etc/shadow
-
-#-----------------------------------------------
-# 4. 其他定制选项 (按需启用)
-# 必要性：★☆☆☆☆
-#-----------------------------------------------
-# 启用 zstd 压缩并添加 upx 工具
-# sed -i 's?zstd$?zstd ucl upx\n$(curdir)/upx/compile := $(curdir)/ucl/compile?g' tools/Makefile
-
-# 允许覆盖已安装的包
-# sed -i 's/$(TARGET_DIR)) install/$(TARGET_DIR)) install --force-overwrite/' package/Makefile
+# [3/3] 修改默认时区
+echo "[3/3] 修改默认时区..."
+SYSTEM_FILE="package/base-files/files/etc/config/system"
+if [ -f "$SYSTEM_FILE" ]; then
+    # 如果文件存在但为空或无时区配置，追加配置
+    if ! grep -q "option timezone" $SYSTEM_FILE; then
+        echo "" >> $SYSTEM_FILE
+        echo "config system" >> $SYSTEM_FILE
+        echo "    option timezone 'CST-8'" >> $SYSTEM_FILE
+        echo "    option timezone_dst ''" >> $SYSTEM_FILE
+    else
+        sed -i "s/option timezone '.*'/option timezone 'CST-8'/g" $SYSTEM_FILE
+    fi
+    echo "时区已修改为 CST-8"
+else
+    echo "警告: 未找到 system 配置文件，跳过时区修改。"
+fi
 
 echo "=== 定制配置完成 ==="
