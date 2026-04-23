@@ -1,3 +1,4 @@
+
 #=================================================
 # Description: Build OpenWrt using GitHub Actions
 # Lisence: MIT
@@ -116,44 +117,64 @@ jobs:
     - name: Apply customizations
       env:
         CONFIG_FILE: '${{ matrix.config_file }}'
+        GIT_ASKPASS: /bin/echo
+        GIT_TERMINAL_PROMPT: 0
       run: |
         cd openwrt
-        # Backup and apply config
+        
+        # 1. 应用配置文件
         if [ -f "${{ github.workspace }}/$CONFIG_FILE" ]; then
           cp -f "${{ github.workspace }}/$CONFIG_FILE" .config
           echo "Config file applied: $CONFIG_FILE"
         else
-          echo "Warning: Config file not found: $CONFIG_FILE"
+          echo "Error: Config file not found: $CONFIG_FILE"
+          exit 1
         fi
         
-        # Run customization script
-        chmod +x "${{ github.workspace }}/customize.sh" && "${{ github.workspace }}/customize.sh"
+        # 2. 直接修改默认设置 (替代 customize.sh)
+        echo "=== Applying Default Settings ==="
         
-        # Replace golang feed
+        # 修改默认 IP 为 10.1.1.110
+        sed -i 's/192.168.1.1/10.1.1.110/g' package/base-files/files/bin/config_generate
+        
+        # 修改默认主机名
+        sed -i 's/OpenWrt/ImmortalWrt/g' package/base-files/files/bin/config_generate
+        sed -i 's/OpenWrt/ImmortalWrt/g' package/base-files/files/etc/banner
+        
+        # 修改默认时区
+        sed -i 's/UTC/Asia\/Shanghai/g' package/base-files/files/bin/config_generate
+        sed -i 's/UTC/Asia\/Shanghai/g' package/base-files/files/etc/config/system
+        
+        echo "Default settings applied successfully."
+
+        # 3. 替换 Golang Feed (使用 kenzo 的源以加速)
         rm -rf feeds/packages/lang/golang
         git clone --depth 1 https://github.com/kenzok8/golang feeds/packages/lang/golang
         
-        # Apply default settings
-        cp -f "${{ github.workspace }}/default-settings" package/emortal/default-settings/files/99-default-settings
+        # 4. 应用默认设置文件
+        if [ -f "${{ github.workspace }}/default-settings" ]; then
+          cp -f "${{ github.workspace }}/default-settings" package/emortal/default-settings/files/99-default-settings
+          echo "Default settings file copied."
+        fi
         
-        # Remove conflicting packages
+        # 5. 移除冲突包
         rm -rf feeds/packages/net/{alist,adguardhome,brook,gost,mosdns,redsocks*,smartdns,trojan*,v2ray*,xray*}
         rm -rf feeds/packages/luci/{luci-app-homeproxy,luci-app-openclash,luci-app-passwall}
         
-        # Clone luci-theme-design
+        # 6. 克隆特定主题
         rm -rf feeds/smpackage/luci-theme-design
         git clone --depth 1 -b js --single-branch https://github.com/kenzok78/luci-theme-design feeds/smpackage/luci-theme-design
         
-        # Apply patches
+        # 7. 应用补丁 (如果存在)
         if [ -f "feeds/smpackage/.github/diy/patches/0004-luci-mod-status-firewall-disable-legacy-firewall-rul.patch" ]; then
           patch -p1 < "feeds/smpackage/.github/diy/patches/0004-luci-mod-status-firewall-disable-legacy-firewall-rul.patch" || true
         fi
         
-        # Update and install feeds
+        # 8. 更新并安装 Feeds
         ./scripts/feeds update -a
         ./scripts/feeds install -a
         
-        # Apply config and defconfig
+        # 9. 重新应用配置并生成 .config
         cp -f "${{ github.workspace }}/${{ matrix.config_file }}" .config
         make defconfig
         echo "Customizations applied successfully"
