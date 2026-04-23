@@ -1,4 +1,3 @@
-
 #=================================================
 # Description: Build OpenWrt using GitHub Actions
 # Lisence: MIT
@@ -102,6 +101,10 @@ jobs:
     - name: Clone source code
       working-directory: ./
       run: |
+        # Configure Git to avoid interactive prompts
+        git config --global init.defaultBranch master
+        git config --global advice.detachedHead false
+        
         git clone --depth 1 --single-branch "$REPO_URL" -b "$REPO_BRANCH" openwrt
         cd openwrt
         echo "src-git smpackage https://github.com/kenzok8/small-package" >> feeds.conf.default
@@ -117,12 +120,10 @@ jobs:
     - name: Apply customizations
       env:
         CONFIG_FILE: '${{ matrix.config_file }}'
-        GIT_ASKPASS: /bin/echo
-        GIT_TERMINAL_PROMPT: 0
       run: |
         cd openwrt
         
-        # 1. 应用配置文件
+        # 1. Apply Config File
         if [ -f "${{ github.workspace }}/$CONFIG_FILE" ]; then
           cp -f "${{ github.workspace }}/$CONFIG_FILE" .config
           echo "Config file applied: $CONFIG_FILE"
@@ -131,52 +132,84 @@ jobs:
           exit 1
         fi
         
-        # 2. 直接修改默认设置 (替代 customize.sh)
-        echo "=== Applying Default Settings ==="
-        
-        # 修改默认 IP 为 10.1.1.110
-        sed -i 's/192.168.1.1/10.1.1.110/g' package/base-files/files/bin/config_generate
-        
-        # 修改默认主机名
-        sed -i 's/OpenWrt/ImmortalWrt/g' package/base-files/files/bin/config_generate
-        sed -i 's/OpenWrt/ImmortalWrt/g' package/base-files/files/etc/banner
-        
-        # 修改默认时区
-        sed -i 's/UTC/Asia\/Shanghai/g' package/base-files/files/bin/config_generate
-        sed -i 's/UTC/Asia\/Shanghai/g' package/base-files/files/etc/config/system
-        
-        echo "Default settings applied successfully."
-
-        # 3. 替换 Golang Feed (使用 kenzo 的源以加速)
+        # 2. Replace Golang Feed (Essential for modern packages)
         rm -rf feeds/packages/lang/golang
         git clone --depth 1 https://github.com/kenzok8/golang feeds/packages/lang/golang
         
-        # 4. 应用默认设置文件
-        if [ -f "${{ github.workspace }}/default-settings" ]; then
-          cp -f "${{ github.workspace }}/default-settings" package/emortal/default-settings/files/99-default-settings
-          echo "Default settings file copied."
-        fi
+        # 3. Create Default Configuration Files (Overwrite defaults)
+        # This replaces the need for sed modifications or customize.sh
         
-        # 5. 移除冲突包
+        # Set Default IP: 10.1.1.110
+        cat > package/base-files/files/etc/config/network <<'EOF'
+config interface 'loopback'
+    option device 'lo'
+    option proto 'static'
+    option ipaddr '127.0.0.1'
+    option netmask '255.0.0.0'
+
+config interface 'lan'
+    option device 'br-lan'
+    option proto 'static'
+    option ipaddr '10.1.1.110'
+    option netmask '255.255.255.0'
+    option ip6assign '60'
+    option gateway '10.1.1.1'
+    option dns '10.1.1.1 223.5.5.5'
+EOF
+        echo "Default IP set to 10.1.1.110"
+
+        # Set Hostname and Timezone
+        cat > package/base-files/files/etc/config/system <<'EOF'
+config system
+    option hostname 'ImmortalWrt'
+    option timezone 'CST-8'
+    option timezonefile '/usr/share/zoneinfo/Asia/Shanghai'
+EOF
+        echo "Hostname set to ImmortalWrt, Timezone set to Asia/Shanghai"
+
+        # Set Default Wireless (Disabled by default for safety)
+        cat > package/base-files/files/etc/config/wireless <<'EOF'
+config wifi-device 'radio0'
+    option type 'mac80211'
+    option channel '11'
+    option hwmode '11g'
+    option path 'platform/*/ieee80211/phy0'
+    option disabled '1'
+
+config wifi-iface 'default_radio0'
+    option device 'radio0'
+    option network 'lan'
+    option mode 'ap'
+    option ssid 'ImmortalWrt'
+    option encryption 'none'
+    option disabled '1'
+EOF
+        echo "Default wireless config created (disabled)"
+
+        # 4. Apply Default Settings UI
+        cp -f "${{ github.workspace }}/default-settings" package/emortal/default-settings/files/99-default-settings 2>/dev/null || true
+        
+        # 5. Remove Conflicting Packages from Feeds
         rm -rf feeds/packages/net/{alist,adguardhome,brook,gost,mosdns,redsocks*,smartdns,trojan*,v2ray*,xray*}
         rm -rf feeds/packages/luci/{luci-app-homeproxy,luci-app-openclash,luci-app-passwall}
         
-        # 6. 克隆特定主题
+        # 6. Clone Specific Themes
         rm -rf feeds/smpackage/luci-theme-design
         git clone --depth 1 -b js --single-branch https://github.com/kenzok78/luci-theme-design feeds/smpackage/luci-theme-design
         
-        # 7. 应用补丁 (如果存在)
+        # 7. Apply Patches (if exist)
         if [ -f "feeds/smpackage/.github/diy/patches/0004-luci-mod-status-firewall-disable-legacy-firewall-rul.patch" ]; then
           patch -p1 < "feeds/smpackage/.github/diy/patches/0004-luci-mod-status-firewall-disable-legacy-firewall-rul.patch" || true
         fi
         
-        # 8. 更新并安装 Feeds
+        # 8. Finalize Feeds
         ./scripts/feeds update -a
         ./scripts/feeds install -a
         
-        # 9. 重新应用配置并生成 .config
+        # 9. Re-apply config after feeds installation
         cp -f "${{ github.workspace }}/${{ matrix.config_file }}" .config
         make defconfig
+        
         echo "Customizations applied successfully"
 
     - name: Cache
