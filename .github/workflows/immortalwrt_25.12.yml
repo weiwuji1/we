@@ -1,9 +1,3 @@
-#=================================================
-# Description: Build OpenWrt using GitHub Actions
-# Lisence: MIT
-# Author: kenzo
-#=================================================
-
 name: immortalwrt_25.12
 
 on:
@@ -107,13 +101,11 @@ jobs:
         cd openwrt
         echo "src-git smpackage https://github.com/kenzok8/small-package" >> feeds.conf.default
         echo "src-git nikki https://github.com/nikkinikki-org/OpenWrt-nikki.git;main" >> feeds.conf.default
-        echo "Source code cloned successfully"
 
     - name: Update feeds
       working-directory: ./openwrt
       run: |
         ./scripts/feeds update -a
-        echo "Feeds updated successfully"
 
     - name: Apply customizations
       env:
@@ -134,45 +126,68 @@ jobs:
         rm -rf feeds/packages/lang/golang
         git clone --depth 1 https://github.com/kenzok8/golang feeds/packages/lang/golang
         
-        # 3. Create Default Configuration Files using echo -e (Safe YAML syntax)
+        # 3. Create Default Network Config (IP: 10.1.1.110)
+        mkdir -p package/base-files/files/etc/config
+        echo "config interface 'loopback'" > package/base-files/files/etc/config/network
+        echo "    option device 'lo'" >> package/base-files/files/etc/config/network
+        echo "    option proto 'static'" >> package/base-files/files/etc/config/network
+        echo "    option ipaddr '127.0.0.1'" >> package/base-files/files/etc/config/network
+        echo "    option netmask '255.0.0.0'" >> package/base-files/files/etc/config/network
+        echo "" >> package/base-files/files/etc/config/network
+        echo "config interface 'lan'" >> package/base-files/files/etc/config/network
+        echo "    option device 'br-lan'" >> package/base-files/files/etc/config/network
+        echo "    option proto 'static'" >> package/base-files/files/etc/config/network
+        echo "    option ipaddr '10.1.1.110'" >> package/base-files/files/etc/config/network
+        echo "    option netmask '255.255.255.0'" >> package/base-files/files/etc/config/network
+        echo "    option ip6assign '60'" >> package/base-files/files/etc/config/network
+        echo "    option gateway '10.1.1.1'" >> package/base-files/files/etc/config/network
+        echo "    option dns '10.1.1.1 223.5.5.5'" >> package/base-files/files/etc/config/network
         
-        # Set Default IP: 10.1.1.110
-        echo -e "config interface 'loopback'\n\toption device 'lo'\n\toption proto 'static'\n\toption ipaddr '127.0.0.1'\n\toption netmask '255.0.0.0'\n\nconfig interface 'lan'\n\toption device 'br-lan'\n\toption proto 'static'\n\toption ipaddr '10.1.1.110'\n\toption netmask '255.255.255.0'\n\toption ip6assign '60'\n\toption gateway '10.1.1.1'\n\toption dns '10.1.1.1 223.5.5.5'" > package/base-files/files/etc/config/network
-        echo "Default IP set to 10.1.1.110"
+        # 4. Create Default System Config (Hostname & Timezone)
+        echo "config system" > package/base-files/files/etc/config/system
+        echo "    option hostname 'ImmortalWrt'" >> package/base-files/files/etc/config/system
+        echo "    option timezone 'CST-8'" >> package/base-files/files/etc/config/system
+        echo "    option timezonefile '/usr/share/zoneinfo/Asia/Shanghai'" >> package/base-files/files/etc/config/system
+        
+        # 5. Create Default Wireless Config (Disabled)
+        echo "config wifi-device 'radio0'" > package/base-files/files/etc/config/wireless
+        echo "    option type 'mac80211'" >> package/base-files/files/etc/config/wireless
+        echo "    option channel '11'" >> package/base-files/files/etc/config/wireless
+        echo "    option hwmode '11g'" >> package/base-files/files/etc/config/wireless
+        echo "    option path 'platform/*/ieee80211/phy0'" >> package/base-files/files/etc/config/wireless
+        echo "    option disabled '1'" >> package/base-files/files/etc/config/wireless
+        echo "" >> package/base-files/files/etc/config/wireless
+        echo "config wifi-iface 'default_radio0'" >> package/base-files/files/etc/config/wireless
+        echo "    option device 'radio0'" >> package/base-files/files/etc/config/wireless
+        echo "    option network 'lan'" >> package/base-files/files/etc/config/wireless
+        echo "    option mode 'ap'" >> package/base-files/files/etc/config/wireless
+        echo "    option ssid 'ImmortalWrt'" >> package/base-files/files/etc/config/wireless
+        echo "    option encryption 'none'" >> package/base-files/files/etc/config/wireless
+        echo "    option disabled '1'" >> package/base-files/files/etc/config/wireless
 
-        # Set Hostname and Timezone
-        echo -e "config system\n\toption hostname 'ImmortalWrt'\n\toption timezone 'CST-8'\n\toption timezonefile '/usr/share/zoneinfo/Asia/Shanghai'" > package/base-files/files/etc/config/system
-        echo "Hostname set to ImmortalWrt, Timezone set to Asia/Shanghai"
-
-        # Set Default Wireless (Disabled)
-        echo -e "config wifi-device 'radio0'\n\toption type 'mac80211'\n\toption channel '11'\n\toption hwmode '11g'\n\toption path 'platform/*/ieee80211/phy0'\n\toption disabled '1'\n\nconfig wifi-iface 'default_radio0'\n\toption device 'radio0'\n\toption network 'lan'\n\toption mode 'ap'\n\toption ssid 'ImmortalWrt'\n\toption encryption 'none'\n\toption disabled '1'" > package/base-files/files/etc/config/wireless
-        echo "Default wireless config created (disabled)"
-
-        # 4. Apply Default Settings UI
+        # 6. Apply Default Settings UI
         cp -f "${{ github.workspace }}/default-settings" package/emortal/default-settings/files/99-default-settings 2>/dev/null || true
         
-        # 5. Remove Conflicting Packages
+        # 7. Remove Conflicting Packages
         rm -rf feeds/packages/net/{alist,adguardhome,brook,gost,mosdns,redsocks*,smartdns,trojan*,v2ray*,xray*}
         rm -rf feeds/packages/luci/{luci-app-homeproxy,luci-app-openclash,luci-app-passwall}
         
-        # 6. Clone Specific Themes
+        # 8. Clone Specific Themes
         rm -rf feeds/smpackage/luci-theme-design
         git clone --depth 1 -b js --single-branch https://github.com/kenzok78/luci-theme-design feeds/smpackage/luci-theme-design
         
-        # 7. Apply Patches
+        # 9. Apply Patches
         if [ -f "feeds/smpackage/.github/diy/patches/0004-luci-mod-status-firewall-disable-legacy-firewall-rul.patch" ]; then
           patch -p1 < "feeds/smpackage/.github/diy/patches/0004-luci-mod-status-firewall-disable-legacy-firewall-rul.patch" || true
         fi
         
-        # 8. Finalize Feeds
+        # 10. Finalize Feeds
         ./scripts/feeds update -a
         ./scripts/feeds install -a
         
-        # 9. Re-apply config
+        # 11. Re-apply config
         cp -f "${{ github.workspace }}/${{ matrix.config_file }}" .config
         make defconfig
-        
-        echo "Customizations applied successfully"
 
     - name: Cache
       uses: klever1988/cachewrtbuild@main
@@ -187,13 +202,10 @@ jobs:
       run: |
         make download -j$(nproc)
         find dl -size -1024c -exec rm -f {} \\;
-        echo "Packages downloaded successfully"
 
     - name: Check space usage
       run: |
         df -hT
-        echo "Available space:"
-        df -hT "${{ github.workspace }}"
 
     - name: Compile the firmware
       id: compile
@@ -202,7 +214,6 @@ jobs:
         THREADS=$(($(nproc)+1))
         echo "Compiling with $THREADS threads..."
         make -j$THREADS || make -j1 V=s
-        echo "Compilation completed successfully"
 
     - name: Upload bin directory
       uses: actions/upload-artifact@v4
@@ -219,10 +230,9 @@ jobs:
       run: |
         echo "=== Firmware Information ==="
         echo "Target: ${{ matrix.target }}"
-        echo "Version: $VERSION"
+        echo "Version: ${{ env.VERSION }}"
         echo "Build Date: ${{ env.date }}"
         ls -lh bin/targets/*/
-        df -hT
 
     - name: Delete old workflow runs
       uses: Mattraks/delete-workflow-runs@v2
