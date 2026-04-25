@@ -144,49 +144,49 @@ jobs:
         # 3. 创建默认网络配置 (IP: 10.1.1.110)
         mkdir -p package/base-files/files/etc/config
         cat > package/base-files/files/etc/config/network <<'NETEOF'
-config interface 'loopback'
-    option device 'lo'
-    option proto 'static'
-    option ipaddr '127.0.0.1'
-    option netmask '255.0.0.0'
+        config interface 'loopback'
+            option device 'lo'
+            option proto 'static'
+            option ipaddr '127.0.0.1'
+            option netmask '255.0.0.0'
 
-config interface 'lan'
-    option device 'br-lan'
-    option proto 'static'
-    option ipaddr '10.1.1.110'
-    option netmask '255.255.255.0'
-    option ip6assign '60'
-    option gateway '10.1.1.1'
-    option dns '10.1.1.1 223.5.5.5'
-NETEOF
+        config interface 'lan'
+            option device 'br-lan'
+            option proto 'static'
+            option ipaddr '10.1.1.110'
+            option netmask '255.255.255.0'
+            option ip6assign '60'
+            option gateway '10.1.1.1'
+            option dns '10.1.1.1 223.5.5.5'
+        NETEOF
         echo "Default IP set to 10.1.1.110"
 
         # 4. 创建默认系统配置 (主机名/时区)
         cat > package/base-files/files/etc/config/system <<'SYSEOF'
-config system
-    option hostname 'ImmortalWrt'
-    option timezone 'CST-8'
-    option timezonefile '/usr/share/zoneinfo/Asia/Shanghai'
-SYSEOF
+        config system
+            option hostname 'ImmortalWrt'
+            option timezone 'CST-8'
+            option timezonefile '/usr/share/zoneinfo/Asia/Shanghai'
+        SYSEOF
         echo "Hostname and Timezone configured"
 
         # 5. 创建默认无线配置 (禁用)
         cat > package/base-files/files/etc/config/wireless <<'WIFIEOF'
-config wifi-device 'radio0'
-    option type 'mac80211'
-    option channel '11'
-    option hwmode '11g'
-    option path 'platform/*/ieee80211/phy0'
-    option disabled '1'
+        config wifi-device 'radio0'
+            option type 'mac80211'
+            option channel '11'
+            option hwmode '11g'
+            option path 'platform/*/ieee80211/phy0'
+            option disabled '1'
 
-config wifi-iface 'default_radio0'
-    option device 'radio0'
-    option network 'lan'
-    option mode 'ap'
-    option ssid 'ImmortalWrt'
-    option encryption 'none'
-    option disabled '1'
-WIFIEOF
+        config wifi-iface 'default_radio0'
+            option device 'radio0'
+            option network 'lan'
+            option mode 'ap'
+            option ssid 'ImmortalWrt'
+            option encryption 'none'
+            option disabled '1'
+        WIFIEOF
         echo "Default wireless config created (disabled)"
 
         # 6. 应用默认设置 UI
