@@ -199,8 +199,8 @@ jobs:
         rm -rf feeds/packages/luci/{luci-app-homeproxy,luci-app-openclash,luci-app-passwall}
         
         # 8. 克隆主题 (关键修复：使用环境变量确保无交互)
-        rm -rf feeds/smpackage/luci-theme-design
-        GIT_ASKPASS=/bin/true git clone --depth 1 -b js --single-branch https://github.com/kenzok78/luci-theme-design feeds/smpackage/luci-theme-design
+        #rm -rf feeds/smpackage/luci-theme-design
+        #GIT_ASKPASS=/bin/true git clone --depth 1 -b js --single-branch https://github.com/kenzok78/luci-theme-design feeds/smpackage/luci-theme-design
         
         # 9. 应用补丁
         if [ -f "feeds/smpackage/.github/diy/patches/0004-luci-mod-status-firewall-disable-legacy-firewall-rul.patch" ]; then
