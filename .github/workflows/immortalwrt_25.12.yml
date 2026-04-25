@@ -31,7 +31,7 @@ env:
   DOCKER_ID: ${{ secrets.DOCKER_ID }}
   DOCKER_PASSWD: ${{ secrets.DOCKER_PASSWD }}
   TZ: Asia/Shanghai
-  REPO_URL: https://github.com/immortalwrt/immortalwrt
+  REPO_URL: https://github.com/immortalwrt/immortalwrt 
   REPO_BRANCH: openwrt-25.12
 
 jobs:
@@ -108,8 +108,8 @@ jobs:
         
         git clone --depth 1 --single-branch "$REPO_URL" -b "$REPO_BRANCH" openwrt
         cd openwrt
-        echo "src-git smpackage https://github.com/kenzok8/small-package" >> feeds.conf.default
-        echo "src-git nikki https://github.com/nikkinikki-org/OpenWrt-nikki.git;main" >> feeds.conf.default
+        echo "src-git smpackage https://github.com/kenzok8/small-package " >> feeds.conf.default
+        echo "src-git nikki https://github.com/nikkinikki-org/OpenWrt-nikki.git ;main" >> feeds.conf.default
         echo "Source code cloned successfully"
 
     - name: Update feeds
@@ -139,7 +139,7 @@ jobs:
         
         # 2. 替换 Golang Feed (确保无交互)
         rm -rf feeds/packages/lang/golang
-        GIT_ASKPASS=/bin/true git clone --depth 1 https://github.com/kenzok8/golang feeds/packages/lang/golang
+        GIT_ASKPASS=/bin/true git clone --depth 1 https://github.com/kenzok8/golang  feeds/packages/lang/golang
         
         # 3. 创建默认网络配置 (IP: 10.1.1.110)
         mkdir -p package/base-files/files/etc/config
@@ -200,7 +200,7 @@ jobs:
         
         # 8. 克隆主题 (关键修复：使用环境变量确保无交互)
         #rm -rf feeds/smpackage/luci-theme-design
-        #GIT_ASKPASS=/bin/true git clone --depth 1 -b js --single-branch https://github.com/kenzok78/luci-theme-design feeds/smpackage/luci-theme-design
+        #GIT_ASKPASS=/bin/true git clone --depth 1 -b js --single-branch https://github.com/kenzok78/luci-theme-design  feeds/smpackage/luci-theme-design
         
         # 9. 应用补丁
         if [ -f "feeds/smpackage/.github/diy/patches/0004-luci-mod-status-firewall-disable-legacy-firewall-rul.patch" ]; then
@@ -218,10 +218,10 @@ jobs:
         echo "Customizations applied successfully"
 
     - name: Install latest Go
-	    uses: actions/setup-go@v5
-	    with:
+      uses: actions/setup-go@v5
+      with:
         go-version: '1.26'
-	      check-latest: true
+        check-latest: true
         
     - name: Cache
       uses: klever1988/cachewrtbuild@main
